@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.BlogUserDao">
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.BlogUser">
+		<result column="USER_ID" property="userId" />
+		<result column="USER_NAME" property="userName" />
+		<result column="NICK_NAME" property="nickName" />
+		<result column="USER_PASSWORD" property="passWord" />
+		<result column="IMAGE_URL" property="headUrl" />
+		<result column="ADDRESS" property="address" />
+		<result column="AGE" property="age" />
+		<result column="SEX" property="sex" />
+		<result column="USER_WORK" property="work" />
+		<result column="SIGNATURE" property="signature" />
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="UPDATE_DATE" property="updateDate" />
+		<!--<result column="IDCARD_URL" property="checkIdcardPicUrl" /> <result 
+			column="YEAR_NUM" property="yearNum" /> <result column="CREATE_DATE" property="createtime" 
+			/> <result column="UPDATE_DATE" property="updateDate" /> <result column="PERSON_NUM" 
+			property="personNum" /> -->
+
+	</resultMap>
+
+	<insert id="create" parameterType="com.service.TestCollect.pojo.BlogUser">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into USER_INFO
+		(USER_ID,USER_NAME,NICK_NAME,USER_PASSWORD,IMAGE_URL,ADDRESS,AGE,SEX,USER_WORK,SIGNATURE,CREATE_DATE,UPDATE_DATE)
+		values (
+
+		#{ userId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ userName,
+		javaType=String,
+		jdbcType=VARCHAR},
+		#{ nickName, javaType=String,
+		jdbcType=VARCHAR},
+		#{ passWord,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		headUrl, javaType=String,
+		jdbcType=VARCHAR},
+		#{ address,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		age, javaType=int,
+		jdbcType=INTEGER},
+		#{ sex,
+		javaType=int, jdbcType=INTEGER},
+		#{
+		work,
+		javaType=String,
+		jdbcType=VARCHAR},
+		#{ signature,
+		javaType=String,
+		jdbcType=VARCHAR}
+		,
+		#{
+		createDate, javaType=String,
+		jdbcType=VARCHAR}
+		,
+		#{
+		updateDate,
+		javaType=String, jdbcType=VARCHAR}
+		<!-- , #{ checkIdcardPicUrl, javaType=String, jdbcType=VARCHAR}, #{ yearNum, 
+			javaType=String, jdbcType=VARCHAR}, #{ createtime, javaType=String, jdbcType=VARCHAR}, 
+			#{ personNum, javaType=int, jdbcType=INTEGER} -->
+		)
+	</insert>
+
+
+	<update id="updateUserInfo" parameterType="com.service.TestCollect.pojo.BlogInfo">
+		update blog
+		set
+		USER_NAME=#{ blogContent, javaType=String, jdbcType=VARCHAR},
+
+		SEX=#{
+		sex, javaType=String, jdbcType=VARCHAR},
+		PHONE_NUM=#{ phoneNum,
+		javaType=String, jdbcType=VARCHAR},
+		YEAR_NUM=#{ yearNum,
+		javaType=String, jdbcType=VARCHAR},
+		UPDATE_DATE=#{ updateDate,
+		javaType=String, jdbcType=VARCHAR}
+		where
+		USER_ID=#{ userId}
+	</update>
+	<resultMap id="blogResultMap" extends="BaseResultMap"
+		type="com.service.TestCollect.pojo.BlogInfo">
+		<result column="BLOG_ID" property="blogId" />
+		<result column="TITLE" property="title" />
+		<result column="BLOG_CONTENT" property="blogContent" />
+		<result column="CREATE_DATE" property="createblogDate" />
+		<result column="UPDATE_DATE" property="updateDate" />
+		<result column="AUTHOR" property="author" />
+		<result column="PRAISE_COUNT" property="praiseCount" />
+		<result column="COMMENTS" property="comments" />
+		<result column="COMMENTS_NUM" property="commentsNum" />
+		<result column="IMG_URL" property="imageUrl" />
+	</resultMap>
+	<select id="queryUserBlogData" resultMap="blogResultMap"
+		parameterType="String">
+		select
+		 <!--u.`ADDRESS`,
+		 u.`AGE`,
+		u.`IMAGE_URL`,
+		u.`NICK_NAME`,
+		u.`SEX`,
+		u.`USER_WORK`,
+		u.`USER_PASSWORD`,
+		u.`USER_ID`,
+		u.`USER_NAME`,
+		b.`AUTHOR`,
+		b.`BLOG_CONTENT`,
+		b.`IMG_URL`,
+		b.`TITLE`,
+		b.`CREATE_DATE`,
+		b.`BLOG_ID` -->
+		u.*,
+		b.*
+		from USER_INFO U
+		LEFT JOIN BLOG B ON U.USER_ID = B.USER_ID WHERE
+		U.USER_ID = #{userId}
+
+	</select>
+
+	<select id="queryUserName" resultMap="BaseResultMap"
+		parameterType="String">
+		select *
+		from USER_INFO WHERE USER_NAME = #{userName}
+	</select>
+
+	<select id="queryUser" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from USER_INFO where USER_ID=#{userId}
+	</select>
+
+	<select id="MaxId" resultMap="BaseResultMap" parameterType="String">
+		select MAX(PERSON_NUM) personNum
+		from user_info where 1=1
+
+	</select>
+
+</mapper>

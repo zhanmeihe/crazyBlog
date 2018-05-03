@@ -1,0 +1,275 @@
+@charset "utf-8";
+body, ul, li, p, img, h1, h2, h3, h4, h5, h6, dl, dt, dd, strong, i, label{margin:0;padding:0;list-style:none;border:none;}
+input, a, button, div, textarea{outline:none;border-radius:0;border:none;resize:none;-webkit-tap-highlight-color:rgba(0,0,0,0);/*禁止点击按钮上的黑块*/}
+span, i, a, label{display:inline-block;}
+body{-webkit-overflow-scrolling:touch;}
+a{text-decoration:none;}
+body{font-family: "Microsoft YaHei";}
+.bg-succ {
+    background: url("../images/bg-succ.jpg");
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+}
+/*主页*/
+.index {
+    position: relative;
+}
+.g-index-bg {
+    background: url(../images/index-bg-2.png);
+    background-size: 100%;
+    width: 100%;
+    height: 12.40rem;
+    position: relative;
+}
+.g-index-bg .join {
+    position: absolute;
+    bottom: 2rem;
+    left: 1rem;
+    font-size: .3rem;
+}
+.g-index-bg .join a {
+    color: #fff;
+    width: 2.5rem;
+    text-align: center;
+    height: .7rem;
+    line-height: .7rem;
+    border-radius: 5px;
+    background: #ff4747;
+}
+.g-lj-bottom {
+    font-size: .3rem;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border-top: 1px solid #e1e1e1;
+    z-index: 2;
+}
+.g-lj-bottom a {
+    color: #000;
+    line-height: .9rem;
+    width: 32.3%;
+    border-right: 1px solid #ccc;
+}
+.g-lj-bottom a:last-child {
+    border-right: 0;
+}
+/*个人信息注册*/
+.g-personal {
+    margin: .4rem .2rem .2rem .2rem;
+}
+.g-personal .m-name {
+
+}
+.m-name div {
+    border-bottom: 1px solid #ccc;
+    padding: .1rem 0;
+    line-height: .5rem;
+    font-size: .28rem;
+}
+.m-name div input {
+    font-size: .28rem;
+}
+.m-name .gender label {
+    margin-right: .7rem;
+}
+.m-name .type-work div {
+    padding-left: .5rem;
+    border: none;
+}
+.type-work div label {
+    width: 2rem;
+}
+.g-upload .id {
+    padding-top: .1rem;
+    font-size: .28rem;
+}
+.m-upload-id{position:relative;text-align:center;margin-top:.4rem;}
+.m-upload-id img{width:5.6rem;height:2.6rem;box-shadow:0 0.15rem 0.15rem -0.05rem #dce1e6;}
+.m-upload-id input{position:absolute;width:5.6rem;height:2.9rem;top:0rem;left:.7rem;opacity:0;}
+.g-field{text-align:center;font-size:.3rem;}
+.m-ok{margin-top:.8rem;}
+.m-fieldBottom {margin: 1rem 0 1rem 0;}
+.g-field input,.g-field a{text-align:center;font-size:.3rem;text-decoration:none;display:inline-block;color:#fff;width:6rem;height:.9rem;line-height:.9rem;background:#ff4747;border-radius:35px;box-shadow:1px 1px 0 #ccc;}
+/*注册成功*/
+.g-success {
+    margin-top: 2rem;
+    width: 100%;
+    text-align: center;
+}
+.g-success .titile {
+    font-size: .4rem;
+    font-weight: bold;
+}
+.g-success span {
+
+}
+.g-success p {
+    font-size: .28rem;
+    padding-top: .2rem;
+}
+.g-success div {
+    padding-top: .2rem;
+    font-size: .3rem;
+}
+.g-success .fanhui-index {
+    margin-top: 1rem;
+
+}
+.g-success .fail-suc {
+    margin-top: 4rem;
+}
+/*接单列表*/
+.m-order-title {
+    text-align: center;
+    font-size: .4rem;
+    padding: .3rem 0;
+    border-bottom: 1px solid #ccc;
+}
+.m-order-cent {
+    margin: .2rem;
+}
+.details {
+    font-size: .28rem;
+    padding: .2rem;
+}
+.m-order-cent ul li {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: .2rem;
+}
+.m-order-cent ul li a {
+    color: #000;
+    width: 100%;
+}
+.z-center .details p,.m-details .details p {
+    padding-bottom: .1rem;
+}
+.g-order-list {
+    padding-bottom: 1rem;
+}
+/*订单详情页*/
+.m-details {
+    border: 1px solid #ccc;
+    margin-bottom: .2rem;
+    font-size: .28rem;
+}
+.details .qingdan {
+    padding-bottom: .1rem;
+}
+.aggregate {
+    padding: .2rem;
+}
+.aggregate a {
+    padding-left: .5rem;
+}
+.order-derail {
+    margin-top: 3rem;
+}
+/*个人中心*/
+.m-per {
+    margin: .2rem;
+    padding-bottom: 1rem;
+}
+.m-per .titile-img {
+    position: relative;
+    text-align: center;
+}
+.m-per .titile-img img {
+    width: 1.7rem;
+    height: 1.7rem;
+}
+.m-per .titile-img input {
+    position: absolute;
+    width: 1.7rem;
+    height: 1.7rem;
+    left: 2.7rem;
+    opacity: 0;
+}
+.m-personal-center{background:#fff;margin:.2rem;}
+.m-personal-center .bank-card{height:.88rem;line-height:.88rem;}
+.m-personal-center{background:#fff;margin:.2rem;padding-left:.2rem;border-radius:10px;}
+.m-personal-center .bank-card{height:.88rem;border-bottom:1px solid #ccc;font-size:.28rem;display:flex;justify-content:space-between;}
+.m-personal-center .bank-card .right{font-size:.28rem;color:#999;}
+.m-personal-center .dingdan {
+    font-size: .28rem;
+    text-align: center;
+    padding: .2rem 0;
+}
+.m-personal-center .dingdan a {
+    color: #000;
+}
+.m-personal-center .g-field {
+    margin-top: .5rem;
+}
+.g-field input {
+
+}
+/*施工详情----上班打卡*/
+.m-clock-in {
+
+}
+.m-clock-in {
+    height: 2rem;
+    width: 2rem;
+    background: #ff4747;
+    border-radius: 50%;
+    margin: 20px auto;
+    text-align: center;
+    font-size: .25rem;
+    color: #fff;
+    background: #00bfff;
+    box-shadow: 0 0 0 .1rem rgba(0, 191, 255, .4);
+    /*line-height: 2rem;*/
+}
+.m-clock-in .in {
+    margin-bottom: .1rem;
+    padding: .6rem 0 0 0;
+    font-size: .32rem;
+    font-weight: bold;
+}
+.m-check-audio {
+    font-size: .32rem;
+    text-align: center;
+    margin-top: .5rem;
+}
+.m-check-audio .check-arrive {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+.s-scene {
+    padding: .2rem;
+}
+.s-scene ul {
+    /*display: flex;*/
+    overflow: hidden;
+}
+.s-scene ul li {
+    /*flex: 1;*/
+    position: relative;
+    float: left;
+    font-size: .24rem;
+    height: 2rem;
+    width: 2rem;
+    border: 1px solid #ccc;
+    line-height: 2rem;
+}
+.s-scene ul li input {
+    height: 2rem;
+    width: 2rem;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+}
+.s-scene ul li:nth-child(2) {
+    margin: 0 .48rem;
+}
+.work {
+    border-bottom: 1px solid #ccc;
+}
+.work .go-work {
+    font-size: .3rem;
+}

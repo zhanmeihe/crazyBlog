@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.PraiseDao">
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.Praise">
+		<result column="ZAN_ID" property="praiseId" />
+		<result column="BLOG_ID" property="blogId" />
+		<result column="USER_ID" property="userId" />
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="UPDATE_DATE" property="updateDate" />
+		<result column="STATE_STATUS" property="Praisestatus" />
+		<!--<result column="IMAGE_URL" property="picImage" /> <result column="IDCARD_URL" 
+			property="checkIdcardPicUrl" /> <result column="YEAR_NUM" property="yearNum" 
+			/> <result column="CREATE_DATE" property="createtime" /> <result column="UPDATE_DATE" 
+			property="updateDate" /> <result column="PERSON_NUM" property="personNum" 
+			/> -->
+
+	</resultMap>
+
+	<insert id="createZan" parameterType="com.service.TestCollect.pojo.Praise">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into BLOG_ZANINFO
+		(ZAN_ID,BLOG_ID,USER_ID,CREATE_DATE,UPDATE_DATE,STATE_STATUS)
+		values (
+		#{ praiseId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ blogId,
+		javaType=String,
+		jdbcType=VARCHAR},
+		#{ userId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ createDate,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		updateDate, javaType=String,
+		jdbcType=VARCHAR},
+		#{
+		Praisestatus, javaType=int,
+		jdbcType=INTEGER}
+		 
+		<!-- , #{ picImage, javaType=String, jdbcType=VARCHAR}, #{ checkIdcardPicUrl, 
+			javaType=String, jdbcType=VARCHAR}, #{ yearNum, javaType=String, jdbcType=VARCHAR}, 
+			#{ createtime, javaType=String, jdbcType=VARCHAR}, #{ personNum, javaType=int, 
+			jdbcType=INTEGER} -->
+		)
+	</insert>
+
+
+	<select id="queryonetomeny" resultMap="BaseResultMap" parameterType="String">
+		select ZAN_ID,BLOG_ID,USER_ID,CREATE_DATE,UPDATE_DATE,STATE_STATUS
+		
+		 from  BLOG_ZANINFO
+		  WHERE 
+		BLOG_ID=#{ blogId} and USER_ID = #{userId}	 
+	 
+	</select>
+	<select id="indexquery" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG order by UPDATE_DATE desc
+		LIMIT #{ firstResult} , #{
+		maxResults}
+	</select>
+
+	<select id="searchList" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG where title like CONCAT('%',#{queryString},'%') or
+		BLOG_CONTENT like
+		CONCAT('%',#{queryString},'%') or author like
+		CONCAT('%',#{queryString},'%') order by UPDATE_DATE desc
+		LIMIT #{
+		firstResult} , #{
+		maxResults}
+	</select>
+
+
+	
+	  <update id="updatePraise" parameterType="com.service.TestCollect.pojo.Praise" >
+    update BLOG_ZANINFO
+    set
+    		STATE_STATUS=#{ Praisestatus, javaType=int, jdbcType=INTEGER},
+			UPDATE_DATE=#{ updateDate, javaType=String, jdbcType=VARCHAR}
+	where 
+			ZAN_ID=#{praiseId}
+	</update>
+
+	<!-- <select id="selectNum" resultMap="BaseResultMap"
+		parameterType="String">
+		select *
+		from BLOG where USER_ID = #{userId} order BY
+		UPDATE_DATE DESC
+	</select> -->
+
+
+	<!-- <select id="queryId" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG where BLOG_ID=#{blogId} ORDER BY UPDATE_DATE DESC
+	</select>
+ -->
+	<select id="selectNum" resultMap="BaseResultMap" parameterType="String">
+		select COUNT(BLOG_ID) countZan
+		from BLOG_ZANINFO where STATE_STATUS = 1
+	</select>
+
+</mapper>

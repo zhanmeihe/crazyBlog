@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+	<appender name="logfile_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<Prudent>true</Prudent>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>
+				../logs/error/${HOSTNAME}.${CONTEXT_NAME}.%d{yyyy-MM-dd-HH}.error.log
+			</FileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<Pattern>
+				<![CDATA[
+				%d{HH:mm:ss.SSS} [%replace(%thread){" for queue: 'weblogic.kernel.Default \(self-tuning\)'",''}] %.-1level %logger{32} - %msg %n
+				]]>
+			</Pattern>
+		</encoder>
+	</appender>
+	<appender name="logfile_info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<Prudent>true</Prudent>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>
+				../logs/info/${HOSTNAME}.${CONTEXT_NAME}.%d{yyyy-MM-dd-HH}.info.log
+			</FileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<Pattern>
+				<![CDATA[
+				%d{HH:mm:ss.SSS} [%replace(%thread){" for queue: 'weblogic.kernel.Default \(self-tuning\)'",''}] %.-1level %logger{32} - %msg %n
+				]]>
+			</Pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="logfile_debug" class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>512</queueSize>
+		<appender name="_logfile_debug" class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+				<level>DEBUG</level>
+			</filter>
+			<Prudent>true</Prudent>
+			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<FileNamePattern>
+					../logs/debug/${HOSTNAME}.${CONTEXT_NAME}.%d{yyyy-MM-dd-HH}-%i.debug.log
+				</FileNamePattern>
+				<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+					<maxFileSize>800MB</maxFileSize>
+				</timeBasedFileNamingAndTriggeringPolicy>
+			</rollingPolicy>
+			<encoder>
+				<Pattern>
+					<![CDATA[
+				%d{HH:mm:ss.SSS} [%replace(%thread){" for queue: 'weblogic.kernel.Default \(self-tuning\)'",''}] %.-1level %logger{32} - %msg %n
+				]]>
+				</Pattern>
+			</encoder>
+		</appender>
+	</appender>
+
+	<logger name="root" level="DEBUG">
+		<appender-ref ref="logfile_error"/>
+	</logger>
+	<logger name="com">
+		<!-- <appender-ref ref="logfile_debug"/> -->
+		<appender-ref ref="logfile_info"/>
+		<appender-ref ref="logfile_error"/>
+	</logger>
+	<logger name="org.apache.ibatis">
+		<!-- <appender-ref ref="logfile_debug"/>
+		<appender-ref ref="logfile_info"/> -->
+		<appender-ref ref="logfile_error"/>
+	</logger>
+	<logger name="java.sql">
+		<!-- <appender-ref ref="logfile_debug"/>
+		<appender-ref ref="logfile_info"/> -->
+		<appender-ref ref="logfile_error"/>
+	</logger>
+
+</included>

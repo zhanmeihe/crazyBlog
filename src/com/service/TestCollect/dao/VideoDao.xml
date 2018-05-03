@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.VideoDao">
+<cache eviction="LRU" flushInterval="60000" size="1024" readOnly="true" />
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.Video">
+		<result column="Web_Site_Id" property="progid" />
+		<result column="Video_Title" property="name" />
+		<result column="Web_Url" property="url" />
+		<result column="Description" property="description" />
+		<result column="Adress" property="area" />
+		<result column="Video_Create_Date" property="publishDate" />
+		<result column="Web_Site" property="appName" />
+		<result column="Video_Url" property="videoPath" />
+		<result column="Video_Img_Url" property="imageUrl" />
+		<result column="Video_Type" property="progType" />
+		<result column="Actor" property="actor" />
+		<result column="Director" property="director" />
+		<result column="Sys_Date" property="sysDate" />
+		<result column="numcount" property="num" />
+		<result column="Time_Length" property="timeLength" />
+	</resultMap>
+
+
+	<insert id="create" parameterType="com.service.TestCollect.dao.VideoDao">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into netease_video
+		(Web_Site_Id,Video_Title,Web_Url,Description,Adress,Video_Create_Date,Web_Site,Video_Url,Video_Img_Url,Video_Type,Actor,Director,Sys_Date,Time_Length)
+		values (
+
+		#{ progid, javaType=String,
+		jdbcType=VARCHAR},
+		#{ name, javaType=String,
+		jdbcType=VARCHAR},
+		#{ url,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		description, javaType=String,
+		jdbcType=VARCHAR},
+		#{ area,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		publishDate, javaType=String,
+		jdbcType=VARCHAR},
+		#{ appName,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		videoPath, javaType=String,
+		jdbcType=VARCHAR},
+		#{ imageUrl,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		progType, javaType=String,
+		jdbcType=VARCHAR},
+		#{ actor,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		director, javaType=String,
+		jdbcType=VARCHAR},
+		#{ sysDate,
+		javaType=String,
+		jdbcType=VARCHAR},
+		#{ timeLength,
+		javaType=String,
+		jdbcType=VARCHAR}
+		)
+	</insert>
+
+
+	<select id="querydata" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from netease_video order by Sys_Date desc
+		LIMIT #{ firstResult} , #{ maxResults}
+	</select>
+
+	<select id="queryId" resultMap="BaseResultMap" parameterType="String">
+		SELECT *
+		FROM netease_video
+		WHERE
+		Web_Site_Id=#{thirdId}
+	</select>
+	
+	<select id="querybool" resultMap="BaseResultMap" parameterType="String">
+		SELECT *
+		FROM netease_video
+		WHERE
+		Web_Site_Id=#{thirdId}
+	</select>
+
+
+	<select id="querytype" resultMap="BaseResultMap" parameterType="String">
+		select Video_Type,count(*) AS numcount
+		from netease_video
+		 group by Video_Type order by numcount
+	</select>
+	
+	<select id="queryvideoType" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from netease_video where Video_Type=#{videotype} order by Sys_Date DESC
+		LIMIT #{ firstResult} , #{ maxResults}
+	</select>
+
+</mapper>

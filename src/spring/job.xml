@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+
+<!-- 定时删除空出数据 -->
+ 
+ 	<!-- <bean id="updateFriendtaskTixianNumJob" class="com.xiubo.job.UpdateFriendtaskTixianNumJob"></bean>
+ <bean id="updateFrtask"
+  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  <property name="targetObject">
+   <ref bean="updateFriendtaskTixianNumJob" />
+  </property>
+  <property name="targetMethod">
+   <value>updateUserTixianNum</value>
+  </property>
+ </bean> -->
+ <!-- 定义触发时间 -->
+<!--  <bean id="updateUserAll"
+  class="org.springframework.scheduling.quartz.CronTriggerBean">
+  <property name="jobDetail">
+   <ref bean="updateFrtask" />
+  </property>
+  cron表达式
+  <property name="cronExpression">
+   第 3秒 隔3秒执行一次
+   <value>3 * * * * ?</value>
+  </property>
+ </bean> -->
+ 
+
+
+
+	<!-- <bean id="snapShotTargetUrlJob" class="com.xiubo.job.SnapShotTargetUrlJob"></bean>
+	<bean id="snapShotTargetUrlJobtask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="snapShotTargetUrlJob" />
+		</property>
+		<property name="targetMethod">
+			<value>updateSnapShotTargetUrl</value>
+		</property>
+	</bean> -->
+	<!-- 心跳时间 -->
+	
+	<!-- <bean id="doSnapShotTargetUrlTime" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="snapShotTargetUrlJobtask" />
+		</property>
+		<property name="cronExpression">
+			<value>1,15,30,45 * * * * ?</value>
+		</property>
+	</bean>
+	 -->
+	<!-- 开始运营时间（quartz） -->
+	<!-- <bean id="quartzJob" class="com.xiubo.job.QuartzJob"></bean>
+ <bean id="jobtask"
+  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  <property name="targetObject">
+   <ref bean="quartzJob" />
+  </property>
+  <property name="targetMethod">
+   <value>work</value>
+  </property>
+ </bean> -->
+ <!-- 定义触发时间 -->
+ <!-- <bean id="doTime"
+  class="org.springframework.scheduling.quartz.CronTriggerBean">
+  <property name="jobDetail">
+   <ref bean="jobtask" />
+  </property>
+  cron表达式
+  <property name="cronExpression">
+   <value>0 43 21 * * ?</value>
+  </property>
+ </bean> -->
+ 
+ <!-- 结束运营时间（quartz） -->
+<!--  	<bean id="endQuartzJob" class="com.xiubo.job.EndQuartzJob"></bean>
+ <bean id="job2task"
+  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  <property name="targetObject">
+   <ref bean="endQuartzJob" />
+  </property>
+  <property name="targetMethod">
+   <value>workYes</value>
+  </property>
+ </bean> -->
+ <!-- 定义触发时间 -->
+ <!-- <bean id="doTimeYes"
+  class="org.springframework.scheduling.quartz.CronTriggerBean">
+  <property name="jobDetail">
+   <ref bean="job2task" />
+  </property>
+  cron表达式
+  <property name="cronExpression">
+   第 10秒 隔 5秒执行一次
+   <value>0 0 23 * * ?</value>
+  </property>
+ </bean> -->
+
+ 
+ <!-- 更新提现次数  凌晨清零00：00 -->
+ 
+<!--  <bean id="updatetaskTixianNumJob" class="com.xiubo.job.UpdatetaskTixianNumJob"></bean>
+ <bean id="jobupdatetask"
+  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  <property name="targetObject">
+   <ref bean="updatetaskTixianNumJob" />
+  </property>
+  <property name="targetMethod">
+   <value>taskUserTixianNum</value>
+  </property>
+ </bean> -->
+ <!-- 定义触发时间 -->
+ <!-- <bean id="UpdateNum"
+  class="org.springframework.scheduling.quartz.CronTriggerBean">
+  <property name="jobDetail">
+   <ref bean="jobupdatetask" />
+  </property>
+  cron表达式
+  <property name="cronExpression">
+   每天凌晨更新提现次数
+   <value>0 0 0 * * ?</value>
+  </property>
+ </bean> -->
+ 
+ 
+ <!-- 定时更新短信 -->
+ <!--  <bean id="updatetaskSendNumJob" class="com.xiubo.job.UpdatetaskSendNumJob"></bean>
+ <bean id="jobupdateSendtask"
+  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  <property name="targetObject">
+   <ref bean="updatetaskSendNumJob" />
+  </property>
+  <property name="targetMethod">
+   <value>updateUserSendNum</value>
+  </property>
+ </bean> -->
+ <!-- 定义触发时间 -->
+ <!-- <bean id="UpdateSendNum"
+  class="org.springframework.scheduling.quartz.CronTriggerBean">
+  <property name="jobDetail">
+   <ref bean="jobupdateSendtask" />
+  </property>
+  cron表达式
+  <property name="cronExpression">
+   每天凌晨更新更新短信下发次数
+   <value>0 0 0 * * ?</value>
+  </property>
+ </bean> -->
+ 
+ 
+ 
+ <!-- 定时删除 -->
+ <!-- <bean id="deletaskJob" class="com.xiubo.job.DeletaskJob"></bean>
+ <bean id="deletaskJobjobtask"
+  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+  <property name="targetObject">
+   <ref bean="deletaskJob" />
+  </property>
+  <property name="targetMethod">
+   <value>taskrom</value>
+  </property>
+ </bean> -->
+ <!-- 定义触发时间 -->
+<!--  <bean id="romall"
+  class="org.springframework.scheduling.quartz.CronTriggerBean">
+  <property name="jobDetail">
+   <ref bean="deletaskJobjobtask" />
+  </property>
+  cron表达式
+  <property name="cronExpression">
+   <value>0 0/1 * * * ?</value>
+  </property>
+ </bean>
+ 
+ 
+  -->
+ 
+	<!-- <bean id="advanceNoticeJob" class="com.xiubo.job.SaveToMp4Job"></bean>
+	<bean id="advanceNoticeJobtask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="advanceNoticeJob" />
+		</property>
+		<property name="targetMethod">
+			<value>saveToMp4</value>
+		</property>
+	</bean>
+	<bean id="doSaveToMp4Time" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="advanceNoticeJobtask" />
+		</property>
+		<property name="cronExpression">
+			<value>1,45 * * * * ?</value>
+		</property>
+	</bean>
+	 -->
+		<!-- 配置jsApiTicket -->
+   <!-- 	<bean name ="jsApiTicketJob" class="com.xiubo.service.wechat.job.JsApiTicketJob"/>
+
+    <bean id="methodInvokingTicketJobDetail"    
+        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="jsApiTicketJob" />
+        </property>
+        <property name="targetMethod">
+            <value>getJsApiTicket</value>
+        </property>
+    </bean> -->
+
+    <!-- 配置触发器 -->
+  <!--   <bean id="jsTicketTrigger"  class="org.springframework.scheduling.quartz.CronTriggerBean">    
+       <property name="jobDetail">    
+           <ref bean="methodInvokingTicketJobDetail"/>    
+       </property>    
+        <property name="cronExpression">
+            <value>0 0/15 * * * ?</value>
+        </property>
+    </bean>  
+	
+	<bean id="startQuertz" lazy-init="false" autowire="no"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="updateUserAll"/>
+				<ref bean="doSnapShotTargetUrlTime" />
+				<ref bean="doTime"/>
+				<ref bean="doTimeYes"/>
+				<ref bean="UpdateNum"/>
+				<ref bean="UpdateSendNum"/>
+				<ref bean="romall"/>
+				<ref bean="doSaveToMp4Time" />
+				<ref bean="jsTicketTrigger"/>
+				
+			</list>
+		</property>
+	</bean> -->
+
+</beans>

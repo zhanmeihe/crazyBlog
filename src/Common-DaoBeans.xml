@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- dao beans -->
+
+	 
+	<bean id="videoDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.VideoDao" />
+	</bean> 
+	
+		<bean id="userInfoDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.UserInfoDao" />
+	</bean> 
+	
+		<bean id="taskInfoDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.TaskInfoDao" />
+	</bean> 
+	
+		<bean id="myorderInfoDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.MyorderInfoDao" />
+	</bean> 
+	
+		<bean id="workVideoDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.WorkVideoDao" />
+	</bean> 
+	
+	<bean id="blogInfoDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.BlogInfoDao" />
+	</bean> 
+	
+	<bean id="blogUserDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.BlogUserDao" />
+	</bean> 
+	
+	<bean id="praiseDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.PraiseDao" />
+	</bean> 
+	
+	<bean id="commentDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.CommentDao" />
+	</bean> 
+</beans>
+	

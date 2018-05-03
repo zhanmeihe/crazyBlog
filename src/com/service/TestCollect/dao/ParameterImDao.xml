@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.xiubo.service.im.sys.dao.ParameterImDao" >
+	
+  <resultMap id="BaseResultMap" type="com.xiubo.service.im.sys.ParmeterPo" >
+	<result column="ID" property="id" />
+	<result column="P_NAME" property="name" />
+	<result column="P_VALUE" property="valueI" />
+	<result column="P_NOTE" property="note" />
+	<result column="P_TYPE" property="type" />
+  </resultMap>
+  
+  <select id="find" resultMap="BaseResultMap" parameterType="String" >
+    select ID,P_NAME,P_VALUE,P_NOTE,P_TYPE
+    from PARAMER_SYS
+    where
+			ID = #{ id}
+	  </select>
+	  
+	   <select id="findPrivacyClause" resultMap="BaseResultMap" parameterType="String" >
+    select  P_NAME,P_VALUE 
+    from PARAMER_SYS
+    where
+			 P_TYPE = 5
+	  </select>
+	  
+	  
+	   <select id="findForce" resultMap="BaseResultMap" parameterType="String" >
+    select P_VALUE,P_NOTE
+    from PARAMER_SYS
+    where
+			ID = #{ id}
+	  </select>
+	  
+	  
+  <select id="findByName" resultMap="BaseResultMap" parameterType="String" >
+    select ID,P_NAME,P_VALUE,P_NOTE,P_TYPE
+    from PARAMER_SYS
+    where
+			P_NAME = #{ name}
+	  </select>
+  
+  <select id="findAll" resultMap="BaseResultMap" >
+    select ID,P_NAME,P_VALUE,P_NOTE,P_TYPE
+    from PARAMER_SYS
+  </select>
+  
+  
+  
+  <delete id="delete" parameterType="String" >
+    delete from PARAMER_SYS
+    where 
+			ID = #{ id}
+	  </delete>
+  
+  <insert id="create" parameterType="com.xiubo.service.im.sys.ParmeterPo" >
+	 	<selectKey keyProperty="ID" resultType="int" order="BEFORE">
+		select PARAMETER_S.nextval from dual
+	</selectKey>
+	 	
+    insert into PARAMETER (ID,P_NAME,P_VALUE,P_NOTE,P_TYPE)
+    values (
+			#{ id, javaType=int, jdbcType=INT},
+			#{ name, javaType=String, jdbcType=VARCHAR},
+			#{ valueI, javaType=String, jdbcType=VARCHAR},
+			#{ note, javaType=String, jdbcType=VARCHAR},
+			#{ type, javaType=int, jdbcType=INT}
+	    )
+  </insert>
+
+  <update id="update" parameterType="com.xiubo.service.im.sys.ParmeterPo" >
+    update PARAMER_SYS
+    set
+			P_NAME = #{ name, javaType=String, jdbcType=VARCHAR},
+				P_VALUE = #{ valueI, javaType=String, jdbcType=VARCHAR},
+				P_NOTE = #{ note, javaType=String, jdbcType=VARCHAR},
+				P_TYPE = #{ type, javaType=int, jdbcType=INT}
+	    where 
+			ID = #{ id}
+	  </update>
+
+<!--codegen-->
+
+</mapper>

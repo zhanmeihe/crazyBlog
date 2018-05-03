@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.CommentDao">
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.Comment">
+		<result column="COMMENT_ID" property="commentId" />
+		<result column="BLOG_ID" property="blogId" />
+		<result column="USER_ID" property="userId" />
+		<result column="COMMENT_CONTENT" property="commentContent" />
+		<result column="ZAN_NUM" property="zanNum" />
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="UPDATE_DATE" property="updateDate" />
+	</resultMap>
+
+	<insert id="createComments" parameterType="com.service.TestCollect.pojo.Comment">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into COMMENT
+		(COMMENT_ID,BLOG_ID,USER_ID,COMMENT_CONTENT,ZAN_NUM,CREATE_DATE,UPDATE_DATE)
+		values (
+		#{ commentId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ blogId,
+		javaType=String,
+		jdbcType=VARCHAR},
+		#{ userId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ commentContent, javaType=String,
+		jdbcType=VARCHAR},
+		#{
+		zanNum, javaType=int,
+		jdbcType=INTEGER},
+		#{ createDate,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		updateDate, javaType=String,
+		jdbcType=VARCHAR} 
+		)
+	</insert>
+
+
+	<select id="queryCommentAll" resultMap="BaseResultMap" parameterType="String">
+		select *
+		 from  COMMENT
+		  order by UPDATE_DATE desc
+		LIMIT #{ firstResult} , #{
+		maxRowResult} 
+	 
+	</select>
+	<select id="indexquery" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG order by UPDATE_DATE desc
+		LIMIT #{ firstResult} , #{
+		maxResults}
+	</select>
+
+	<select id="searchList" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG where title like CONCAT('%',#{queryString},'%') or
+		BLOG_CONTENT like
+		CONCAT('%',#{queryString},'%') or author like
+		CONCAT('%',#{queryString},'%') order by UPDATE_DATE desc
+		LIMIT #{
+		firstResult} , #{
+		maxResults}
+	</select>
+
+
+	
+	  <update id="updatePraise" parameterType="com.service.TestCollect.pojo.Praise" >
+    update BLOG_ZANINFO
+    set
+    		STATE_STATUS=#{ Praisestatus, javaType=int, jdbcType=INTEGER},
+			UPDATE_DATE=#{ updateDate, javaType=String, jdbcType=VARCHAR}
+	where 
+			BLOG_ID=#{blogId}
+	</update>
+
+	<!-- <select id="selectNum" resultMap="BaseResultMap"
+		parameterType="String">
+		select *
+		from BLOG where USER_ID = #{userId} order BY
+		UPDATE_DATE DESC
+	</select> -->
+
+
+	<!-- <select id="queryId" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG where BLOG_ID=#{blogId} ORDER BY UPDATE_DATE DESC
+	</select>
+ -->
+	<select id="selectNum" resultMap="BaseResultMap" parameterType="String">
+		select COUNT(BLOG_ID) countZan
+		from BLOG_ZANINFO where STATE_STATUS = 1
+	</select>
+
+</mapper>

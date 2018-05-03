@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="cacheSeconds" value="0" />
+		<property name="messageConverters">
+			<util:list id="beanList">
+				<ref bean="stringHttpMessageConverter" />
+				<ref bean="byteArrayHttpMessageConverter" />
+				<ref bean="resourceHttpMessageConverter" />
+				<ref bean="sourceHttpMessageConverter" />
+				<ref bean="xmlAwareFormHttpMessageConverter" />
+				<ref bean="jaxb2RootElementHttpMessageConverter" />
+				<ref bean="mappingJacksonHttpMessageConverter" />
+			</util:list>
+		</property>
+	</bean>
+	<bean id="stringHttpMessageConverter"
+		class="org.springframework.http.converter.StringHttpMessageConverter" />
+	<bean id="byteArrayHttpMessageConverter"
+		class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+	<bean id="resourceHttpMessageConverter"
+		class="org.springframework.http.converter.ResourceHttpMessageConverter" />
+	<bean id="sourceHttpMessageConverter"
+		class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
+	<bean id="xmlAwareFormHttpMessageConverter"
+		class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter" />
+	<bean id="jaxb2RootElementHttpMessageConverter"
+		class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter" />
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:prefix="/WEB-INF/jsp/" p:suffix=".jsp" />
+
+
+	<mvc:resources mapping="/static/script/**" location="/script/" />
+	<mvc:resources mapping="/static/style/**" location="/style/" />
+	<mvc:resources mapping="/static/image/**" location="/image/" />
+	<mvc:resources mapping="/400.html" location="/400.html" />
+
+	<mvc:resources mapping="/test/**" location="/test/" />
+	<mvc:resources mapping="/video/**" location="/video/" />
+	<mvc:resources mapping="/app/**" location="/app/" />
+	<mvc:resources mapping="/assets/**" location="/assets/" />
+	<mvc:resources mapping="/css/**" location="/css/" />
+	<mvc:resources mapping="/images/**" location="/images/" />
+	<mvc:resources mapping="/js/**" location="/js/" />
+	<mvc:resources mapping="/ueditor1_4_3/**" location="/ueditor1_4_3/" />
+	<mvc:resources mapping="/voice/**" location="/voice/" />
+	<mvc:annotation-driven />
+
+	<context:component-scan base-package="com.service.*"
+		annotation-config="true">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+
+	<!-- 配置Token拦截器，防止用户重复提交数据 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/editw" /> 
+			<!-- <mvc:mapping path="/b/**" /> -->   <!--这个地方时你要拦截得路径 我是拦截所有得URL -->
+			
+			<mvc:exclude-mapping path="/sign_login" />
+			
+			<bean class="file.SpringLoginInterceptor" /><!--class文件路径为拦截器路径！！ -->
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	<!-- 定义文件上传 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8" /> <!-- 默认编码 (ISO-8859-1) -->
+		<property name="maxInMemorySize" value="1024000" /> <!-- 最大内存大小 (10240) -->
+		<!-- <property name="uploadTempDir" value="/upload/" /> 上传后的目录名 (WebUtils#TEMP_DIR_CONTEXT_ATTRIBUTE) -->
+		<property name="maxUploadSize" value="-1" /> <!-- 最大文件大小1m，-1为无限止(-1) -->
+	</bean>
+</beans>

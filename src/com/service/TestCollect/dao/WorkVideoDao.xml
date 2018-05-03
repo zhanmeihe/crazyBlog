@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.WorkVideoDao">
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.WorkVideo">
+		<result column="ID" property="id" />
+		<result column="USER_ID" property="userId" />
+		<result column="TASK_ID" property="taskId" />
+		<result column="FILE_URL" property="fileUrl" />
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="UPDATE_DATE" property="updatetime" />
+	</resultMap>
+ 
+	<insert id="createVideo" parameterType="com.service.TestCollect.dao.WorkVideoDao">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into work_info
+		(USER_ID,TASK_ID,FILE_URL,CREATE_DATE,UPDATE_DATE)
+		values (
+
+	<!-- 	#{ id, javaType=String,
+		jdbcType=VARCHAR}, -->
+		#{ userId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ taskId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ fileUrl, javaType=String,
+		jdbcType=VARCHAR},
+		#{ createDate,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		updatetime, javaType=String,
+		jdbcType=VARCHAR} 
+		)
+	</insert>
+	
+	
+	  <update id="updateUserInfo" parameterType="com.service.TestCollect.pojo.UserInfo" >
+    update user_info
+    set
+    		USER_NAME=#{ userName, javaType=String, jdbcType=VARCHAR},
+			 
+			SEX=#{ sex, javaType=String, jdbcType=VARCHAR},
+			PHONE_NUM=#{ phoneNum, javaType=String, jdbcType=VARCHAR},
+			YEAR_NUM=#{ yearNum, javaType=String, jdbcType=VARCHAR},
+			UPDATE_DATE=#{ updateDate, javaType=String, jdbcType=VARCHAR}
+	where 
+			USER_ID=#{ userId}
+	</update>
+	
+	
+	<select id="selectOrderInfo" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from order_info where TASK_ID=#{taskId} 
+		 
+	</select>
+	
+	<select id="queryOrder" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from order_info where USER_ID=#{userId}
+		 
+	</select>
+
+</mapper>

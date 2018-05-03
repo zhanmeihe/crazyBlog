@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.BlogInfoDao">
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.BlogInfo">
+		<result column="BLOG_ID" property="blogId" />
+		<result column="USER_ID" property="userId" />
+		<result column="TITLE" property="title" />
+		<result column="BLOG_CONTENT" property="blogContent" />
+		<result column="CREATE_DATE" property="createblogDate" />
+		<result column="UPDATE_DATE" property="updateDate" />
+		<result column="AUTHOR" property="author" />
+		<result column="PRAISE_COUNT" property="praiseCount" />
+		<result column="COMMENTS" property="comments" />
+		<result column="COMMENTS_NUM" property="commentsNum" />
+		<result column="IMG_URL" property="imageUrl" />
+		<!--<result column="IMAGE_URL" property="picImage" /> <result column="IDCARD_URL" 
+			property="checkIdcardPicUrl" /> <result column="YEAR_NUM" property="yearNum" 
+			/> <result column="CREATE_DATE" property="createtime" /> <result column="UPDATE_DATE" 
+			property="updateDate" /> <result column="PERSON_NUM" property="personNum" 
+			/> -->
+
+	</resultMap>
+
+	<insert id="create" parameterType="com.service.TestCollect.pojo.BlogInfo">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into BLOG
+		(BLOG_ID,USER_ID,TITLE,BLOG_CONTENT,CREATE_DATE,UPDATE_DATE,AUTHOR,PRAISE_COUNT,COMMENTS,COMMENTS_NUM,IMG_URL)
+		values (
+
+		#{ blogId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ userId,
+		javaType=String,
+		jdbcType=VARCHAR},
+		#{ title, javaType=String,
+		jdbcType=VARCHAR},
+		#{ blogContent,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		createblogDate, javaType=String,
+		jdbcType=VARCHAR},
+		#{ updateDate,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		author, javaType=String,
+		jdbcType=VARCHAR},
+		#{ praiseCount,
+		javaType=int, jdbcType=INTEGER},
+		#{
+		comments, javaType=String,
+		jdbcType=VARCHAR},
+		#{ commentsNum,
+		javaType=int, jdbcType=INTEGER}
+		,
+		#{
+		imageUrl, javaType=String,
+		jdbcType=VARCHAR}
+		<!-- , #{ picImage, javaType=String, jdbcType=VARCHAR}, #{ checkIdcardPicUrl, 
+			javaType=String, jdbcType=VARCHAR}, #{ yearNum, javaType=String, jdbcType=VARCHAR}, 
+			#{ createtime, javaType=String, jdbcType=VARCHAR}, #{ personNum, javaType=int, 
+			jdbcType=INTEGER} -->
+		)
+	</insert>
+
+
+	<update id="updateUserInfo" parameterType="com.service.TestCollect.pojo.BlogInfo">
+		update blog
+		set
+		USER_NAME=#{ blogContent, javaType=String, jdbcType=VARCHAR},
+
+		SEX=#{
+		sex, javaType=String, jdbcType=VARCHAR},
+		PHONE_NUM=#{ phoneNum,
+		javaType=String, jdbcType=VARCHAR},
+		YEAR_NUM=#{ yearNum,
+		javaType=String, jdbcType=VARCHAR},
+		UPDATE_DATE=#{ updateDate,
+		javaType=String, jdbcType=VARCHAR}
+		where
+		USER_ID=#{ userId}
+	</update>
+	<select id="indexquery" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG order by UPDATE_DATE desc
+		LIMIT #{ firstResult} , #{
+		maxResults}
+	</select>
+
+	<select id="searchList" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG where title like CONCAT('%',#{queryString},'%') or
+		BLOG_CONTENT like
+		CONCAT('%',#{queryString},'%') or author like
+		CONCAT('%',#{queryString},'%') order by UPDATE_DATE desc
+		LIMIT #{
+		firstResult} , #{
+		maxResults}
+	</select>
+
+
+	<select id="selectallData" resultMap="BaseResultMap"
+		parameterType="String">
+		select *
+		from BLOG where USER_ID = #{userId} order BY
+		UPDATE_DATE DESC
+	</select>
+
+
+	<select id="queryId" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG where BLOG_ID=#{blogId} ORDER BY UPDATE_DATE DESC
+	</select>
+
+	<select id="querymaxid" resultMap="BaseResultMap" parameterType="String">
+		select max(BLOG_ID) maxBlogId
+		from BLOG where 1=1
+	</select>
+
+	<select id="MaxId" resultMap="BaseResultMap" parameterType="String">
+		select MAX(PERSON_NUM) personNum
+		from user_info where 1=1
+
+	</select>
+
+</mapper>

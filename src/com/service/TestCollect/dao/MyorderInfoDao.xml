@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.MyorderInfoDao">
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.MyorderInfo">
+		<result column="ID" property="id" />
+		<result column="USER_ID" property="userId" />
+		<result column="TASK_ID" property="taskId" />
+		<result column="TASK_INSTRUCTION" property="taskInstruction" />
+		<result column="SALARY_NUM" property="salaryNum" />
+		<result column="TASK_TIME" property="taskDate" />
+		<result column="TASK_ADDRESS" property="taskAddress" />
+		<result column="PRODUCTION_NUM" property="productionNum" />
+		<result column="TASK_LISTING" property="listIng" />
+		<result column="CREATE_DATE" property="createTime" />
+		<result column="UPDATE_DATE" property="updateDate" />
+		<result column="STATE" property="state" />
+	</resultMap>
+ 
+	<insert id="createTask" parameterType="com.service.TestCollect.dao.MyorderInfoDao">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into order_info
+		(USER_ID,TASK_ID,TASK_INSTRUCTION,SALARY_NUM,TASK_TIME,TASK_ADDRESS,
+		PRODUCTION_NUM,TASK_LISTING,CREATE_DATE,UPDATE_DATE,STATE)
+		values (
+
+	<!-- 	#{ id, javaType=String,
+		jdbcType=VARCHAR}, -->
+		#{ userId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ taskId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ taskInstruction, javaType=String,
+		jdbcType=VARCHAR},
+		#{ salaryNum,
+		javaType=double, jdbcType=DECIMAL},
+		#{
+		taskDate, javaType=String,
+		jdbcType=VARCHAR},
+		#{ taskAddress,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		productionNum, javaType=String,
+		jdbcType=VARCHAR},
+		#{ listIng,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		createTime, javaType=String,
+		jdbcType=VARCHAR},
+		#{ updateDate,
+		javaType=String, jdbcType=VARCHAR},
+		#{ state,
+		javaType=int, jdbcType=INTEGER}
+		
+		)
+	</insert>
+	
+	
+	  <update id="updateUserInfo" parameterType="com.service.TestCollect.pojo.UserInfo" >
+    update user_info
+    set
+    		USER_NAME=#{ userName, javaType=String, jdbcType=VARCHAR},
+			 
+			SEX=#{ sex, javaType=String, jdbcType=VARCHAR},
+			PHONE_NUM=#{ phoneNum, javaType=String, jdbcType=VARCHAR},
+			YEAR_NUM=#{ yearNum, javaType=String, jdbcType=VARCHAR},
+			UPDATE_DATE=#{ updateDate, javaType=String, jdbcType=VARCHAR}
+	where 
+			USER_ID=#{ userId}
+	</update>
+	
+	
+	<select id="selectOrderInfo" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from order_info where TASK_ID=#{taskId} 
+		 
+	</select>
+	
+	<select id="queryOrder" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from order_info where USER_ID=#{userId}
+		 
+	</select>
+
+</mapper>

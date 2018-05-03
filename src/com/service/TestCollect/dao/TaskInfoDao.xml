@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.TaskInfoDao">
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.TaskInfo">
+		<result column="ID" property="id" />
+		<result column="TASK_INSTRUCTION" property="taskInstruction" />
+		<result column="SALARY_NUM" property="salaryNum" />
+		<result column="TASK_TIME" property="taskDate" />
+		<result column="TASK_ADDRESS" property="taskAddress" />
+		<result column="PRODUCTION_NUM" property="productionNum" />
+		<result column="TASK_LISTING" property="listIng" />
+		<result column="CREATE_DATE" property="createTime" />
+		<result column="UPDATE_DATE" property="updateDate" />
+		<result column="ORDER_STATE" property="orderState" />
+	</resultMap>
+ 
+	<insert id="createTask" parameterType="com.service.TestCollect.dao.TaskInfoDao">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into task_info
+		(ID,TASK_INSTRUCTION,SALARY_NUM,TASK_TIME,TASK_ADDRESS,
+		PRODUCTION_NUM,TASK_LISTING,CREATE_DATE,UPDATE_DATE,ORDER_STATE)
+		values (
+
+		#{ id, javaType=String,
+		jdbcType=VARCHAR},
+		#{ taskInstruction, javaType=String,
+		jdbcType=VARCHAR},
+		#{ salaryNum,
+		javaType=double, jdbcType=DECIMAL},
+		#{
+		taskDate, javaType=String,
+		jdbcType=VARCHAR},
+		#{ taskAddress,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		productionNum, javaType=String,
+		jdbcType=VARCHAR},
+		#{ listIng,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		createTime, javaType=String,
+		jdbcType=VARCHAR},
+		#{ updateDate,
+		javaType=String, jdbcType=VARCHAR},
+		#{ orderState,
+		javaType=int, jdbcType=INTEGER}
+		
+		)
+	</insert>
+	
+	
+	  <update id="updateTaskInfo" parameterType="com.service.TestCollect.pojo.TaskInfo" >
+    update task_info
+    set
+    		ORDER_STATE=#{ orderState, javaType=int, jdbcType=INTEGER},
+			UPDATE_DATE=#{ updateDate, javaType=String, jdbcType=VARCHAR}
+	where 
+			ID=#{id}
+	</update>
+	
+	
+	<select id="selectInfo" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from task_info where ORDER_STATE = 0
+		 
+	</select>
+	
+	<select id="findId" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from task_info where ID=#{id}
+		 
+	</select>
+
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<contextName>xiubo</contextName>
+	<include resource="logback-common.xml" />
+
+	<logger name="org.springframework.core.env" level="DEBUG">
+		<appender-ref ref="logfile_debug" />
+	</logger>
+	
+
+    
+</configuration>
