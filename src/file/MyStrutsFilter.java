@@ -19,6 +19,8 @@ public class MyStrutsFilter extends OncePerRequestFilter{
 	              HttpServletResponse response, FilterChain filterChain)
 	             throws ServletException, IOException {
 	   
+		
+		
 	        // 不过滤的uri
 	          //String[] notFilter = new String[] { "login.html", "index.html" };
 	   
