@@ -12,6 +12,7 @@
 				../logs/error/${HOSTNAME}.${CONTEXT_NAME}.%d{yyyy-MM-dd-HH}.error.log
 			</FileNamePattern>
 		</rollingPolicy>
+		
 		<encoder>
 			<Pattern>
 				<![CDATA[
