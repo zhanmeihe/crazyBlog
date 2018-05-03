@@ -21,6 +21,9 @@ public class MyStrutsFilter extends OncePerRequestFilter{
 	   
 		
 		    
+		
+		
+		
 	        // 不过滤的uri
 	          //String[] notFilter = new String[] { "login.html", "index.html" };
 	   
