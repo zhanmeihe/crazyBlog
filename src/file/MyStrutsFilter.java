@@ -20,7 +20,7 @@ public class MyStrutsFilter extends OncePerRequestFilter{
 	             throws ServletException, IOException {
 	   
 		
-		
+		    
 	        // 不过滤的uri
 	          //String[] notFilter = new String[] { "login.html", "index.html" };
 	   
