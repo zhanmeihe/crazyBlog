@@ -938,6 +938,15 @@ public class DoMainController implements Runnable {
 	}
 	
 	
+	/**评论发表
+	 * @author zhanmeihe
+	 * @param pinglun
+	 * @param bolgId
+	 * @param userId
+	 * @param response
+	 * @param request
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/writepl",method = RequestMethod.POST,produces = "application/json")
 	public CommonResponse WriteComments(@RequestParam(value = "pinglun") String pinglun,
@@ -958,6 +967,34 @@ public class DoMainController implements Runnable {
 			ct.setZanNum(0);
 			 commentDao.createComments(ct);
 			return  new CommonSuccessResponse(b);
+		} catch (UnisException e) {
+			LOGGER.debug("2", e);
+			return new CommonResponse(e.getCode(), e.getMessage());
+		}catch (Exception e) {
+			LOGGER.debug("3", e);
+			return new SystemErrorResponse();
+		}
+	}
+	
+	
+	/**初始化加载评论列表
+	 * 
+	 * @author zhanmeihe
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/INITDATA",method = RequestMethod.GET,produces = "application/json")
+	public  CommonResponse initComments(
+			HttpServletResponse response, HttpServletRequest request){
+		
+		try {
+			String firstResult = request.getParameter("pagenum");
+			String page = request.getParameter("page");
+			List<Comment> ct = commentDao.queryCommentAll(
+					Integer.parseInt(page), Integer.parseInt(firstResult));
+			
+			return new CommonSuccessResponse(ct);
+			
 		} catch (UnisException e) {
 			LOGGER.debug("2", e);
 			return new CommonResponse(e.getCode(), e.getMessage());

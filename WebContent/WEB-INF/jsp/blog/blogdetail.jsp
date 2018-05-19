@@ -244,10 +244,10 @@ right
 
 window.onload = function () { 
 	
-	<%-- $.ajax({
-	    url : '${pageContext.request.contextPath}/writepl',
-	    data : $("#writeCom").serialize(),
-	    type : 'POST', 
+	 $.ajax({
+	    url : '${pageContext.request.contextPath}/INITDATA',
+	    data : "pagenum=10&page=0",
+	    type : 'GET', 
 	    dataType : 'json', 
 	    async:true, 
 	    success : function(data,strStatus,xhr) {//这是个回调函数 data表示从action中传过来的json数据
@@ -255,17 +255,17 @@ window.onload = function () {
 	    		 //alert(n.blogId);
 	    		 //alert(data.object[0].BlogId);
 	    		 
-	    		 var ss = "<div> <div class='author'><div data-v-f3bf5228='' class='v-tooltip-container' style='z-index: 0;'> <div class='v-tooltip-content'><a href='/u/f79de69d59e3' target='_blank' class='avatar'><img	src='//upload.jianshu.io/users/upload_avatars/4920384/b4f1c76b-52eb-427a-833a-91a1df9f9e56.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114'></a></div></div<div class='info'><a href='/u/f79de69d59e3' target='_blank' class='name'>虬田</a>	<div class='meta'><span>6楼 · 2018.04.17 17:12</span></div></div>	</div><div class='comment-wrap'><p>体会到你的深深思念</p><div class='tool-group'>	<a data-v-cdecbe24='' id='like-button-22919309' class='like-button'><span data-v-cdecbe24=''>4人赞</span></a> <a	 class=''><i class='iconfont ic-comment'></i> <span>回复</span></a><a class='report'><span>举报</span></a>		</div></div></div>				";
+	    		 var ss = "<div> <div class='author'><div data-v-f3bf5228='' class='v-tooltip-container' style='z-index: 0;'> <div class='v-tooltip-content'><a href='/u/f79de69d59e3' target='_blank' class='avatar'><img	src='//upload.jianshu.io/users/upload_avatars/4920384/b4f1c76b-52eb-427a-833a-91a1df9f9e56.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114'></a></div></div<div class='info'><a href='/u/f79de69d59e3' target='_blank' class='name'>虬田</a>	<div class='meta'><span>6楼 · 2018.04.17 17:12</span></div></div>	</div><div class='comment-wrap'><p>"+n.commentContent+"</p><div class='tool-group'>	<a data-v-cdecbe24='' id='like-button-22919309' class='like-button'><span data-v-cdecbe24=''>4人赞</span></a> <a	 class=''><i class='iconfont ic-comment'></i> <span>回复</span></a><a class='report'><span>举报</span></a>		</div></div></div>				";
 	    		/**
 					"<p>"+n.blogContent+"</p>"
 	    		**/
                 $("#comment-22919309").append(ss);  
 	    		   $("#content").val("");
             });  
-	    window.location = "<%=request.getContextPath()%>";
+	   <%--  window.location = "<%=request.getContextPath()%>"; --%>
 				}
 	    
-	    }); --%>
+	    });  
 }
 </script>
 <script>
@@ -361,7 +361,7 @@ function sendPinglun() {
 		    		 //alert(n.blogId);
 		    		 //alert(data.object[0].BlogId);
 		    		 
-		    		 var ss = "<div> <div class='author'><div data-v-f3bf5228='' class='v-tooltip-container' style='z-index: 0;'> <div class='v-tooltip-content'><a href='/u/f79de69d59e3' target='_blank' class='avatar'><img	src='//upload.jianshu.io/users/upload_avatars/4920384/b4f1c76b-52eb-427a-833a-91a1df9f9e56.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114'></a></div></div<div class='info'><a href='/u/f79de69d59e3' target='_blank' class='name'>虬田</a>	<div class='meta'><span>6楼 · 2018.04.17 17:12</span></div></div>	</div><div class='comment-wrap'><p>体会到你的深深思念</p><div class='tool-group'>	<a data-v-cdecbe24='' id='like-button-22919309' class='like-button'><span data-v-cdecbe24=''>4人赞</span></a> <a	 class=''><i class='iconfont ic-comment'></i> <span>回复</span></a><a class='report'><span>举报</span></a>		</div></div></div>				";
+		    		 var ss = "<div> <div class='author'><div data-v-f3bf5228='' class='v-tooltip-container' style='z-index: 0;'> <div class='v-tooltip-content'><a href='/u/f79de69d59e3' target='_blank' class='avatar'><img	src='//upload.jianshu.io/users/upload_avatars/4920384/b4f1c76b-52eb-427a-833a-91a1df9f9e56.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114'></a></div></div<div class='info'><a href='/u/f79de69d59e3' target='_blank' class='name'>虬田</a>	<div class='meta'><span>6楼 · 2018.04.17 17:12</span></div></div>	</div><div class='comment-wrap'><p>"+n.blogContent+"</p><div class='tool-group'>	<a data-v-cdecbe24='' id='like-button-22919309' class='like-button'><span data-v-cdecbe24=''>4人赞</span></a> <a	 class=''><i class='iconfont ic-comment'></i> <span>回复</span></a><a class='report'><span>举报</span></a>		</div></div></div>				";
 		    		/**
 						"<p>"+n.blogContent+"</p>"
 		    		**/
