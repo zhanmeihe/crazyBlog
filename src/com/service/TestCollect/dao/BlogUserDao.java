@@ -11,7 +11,7 @@ public interface BlogUserDao {
 	List <BlogUser> queryUserBlogData(@Param("userId") String userId);
 	BlogUser queryUserName(@Param("userName") String userNmae);
 	BlogUser queryUserNamePassword(@Param("userName") String userNmae,@Param("password") String password);
-	
+	void create(BlogUser user);
 	BlogUser queryUser(@Param("userId") String userId);
 
 }

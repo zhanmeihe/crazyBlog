@@ -99,7 +99,7 @@
 						alt="120" /></a>
 				</div>
 				<ul class="dropdown-menu">
-					<li><a href="http://localhost:8877/APP/medeail.jsp"> <i
+					<li><a href="http://localhost/APP/medeail.jsp"> <i
 							class="iconfont ic-navigation-profile"></i><span>我的主页</span>
 					</a></li>
 					<!--  <li>

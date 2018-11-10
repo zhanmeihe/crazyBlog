@@ -139,6 +139,11 @@
 					<a href="<%=request.getContextPath()%>/sign_login"><input
 						name="Submit" class="input_submit" value="登录" type="submit"></a>
 				</div>
+				<div class="search f_r" id="login">
+					 
+					<a href="<%=request.getContextPath()%>/personal.jsp"><input
+						name="Submit" class="input_submit" value="注册" type="submit"></a>
+				</div>
 				<%
 					} else {
 				%>

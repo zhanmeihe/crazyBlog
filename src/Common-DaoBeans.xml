@@ -52,5 +52,20 @@
 		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
 		<property name="mapperInterface" value="com.service.TestCollect.dao.CommentDao" />
 	</bean> 
+	
+	<bean id="collectionTaskDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.CollectionTaskDao" />
+	</bean> 
+	
+	<bean id="weiXinNumberDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.WeiXinNumberDao" />
+	</bean> 
+	
+	<bean id="weiXinArticleDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.WeiXinArticleDao" />
+	</bean> 
 </beans>
 	

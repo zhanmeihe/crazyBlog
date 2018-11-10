@@ -1,11 +1,13 @@
 package file;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import com.service.TestCollect.pojo.BlogUser;
+import com.zhan.utils.CookieUtils;
 import com.zhan.utils.MD5Utils;
 
 /**
@@ -24,15 +26,26 @@ public class SpringLoginInterceptor implements HandlerInterceptor {
 	 *         Controller方法调用之前调用。SpringMVC的这种Interceptor链式结构也是可以进行中断的
 	 *         ，这种中断方式是令preHandle的返 回值为false，当preHandle的返回值为false的时候整个请求就结束了。
 	 */
+	@SuppressWarnings("null")
 	@Override
 	public boolean preHandle(HttpServletRequest request,
 			HttpServletResponse response, Object handler) throws Exception {
 		// TODO Auto-generated method stub
 		System.out.println("AllInterceptor...............................");
+		String users = "";
+		Cookie[] dd1 = request.getCookies();
+		if (CookieUtils.ifCookies(request)) {
+			for (Cookie cookie : dd1) {
+				if (cookie.getName().equals("userName")) {
+					users = cookie.getValue();
+					continue;
+				}
+			}
+		}
 		HttpSession session = request.getSession(true);
 		BlogUser user = (BlogUser) session.getAttribute("user");
 		// 如果已经登录，放行
-		if (user != null) {
+		if (user != null||users!=null||!users.equals("")) {
 			return true;
 		}
 

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.WeiXinNumberDao">
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.WeiXinNumber">
+		<result column="id" property="id" />
+		<result column="biz" property="biz" />
+		<result column="headimage" property="headimage" />
+		<result column="name" property="name" />
+		<result column="collect" property="collect" />
+		 
+		<!--<result column="IMAGE_URL" property="picImage" /> <result column="IDCARD_URL" 
+			property="checkIdcardPicUrl" /> <result column="YEAR_NUM" property="yearNum" 
+			/> <result column="CREATE_DATE" property="createtime" /> <result column="UPDATE_DATE" 
+			property="updateDate" /> <result column="PERSON_NUM" property="personNum" 
+			/> -->
+
+	</resultMap>
+
+	<insert id="create" parameterType="com.service.TestCollect.pojo.WeiXinNumber">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into weixin
+		(biz,headimage,name,collect)
+		values (
+		#{ biz, javaType=String,
+		jdbcType=VARCHAR},
+		#{ headimage,
+		javaType=String,
+		jdbcType=VARCHAR},
+		#{ name, javaType=String,
+		jdbcType=VARCHAR},
+		#{
+		collect, javaType=long,
+		jdbcType=BIGINT}
+		 
+		<!-- , #{ picImage, javaType=String, jdbcType=VARCHAR}, #{ checkIdcardPicUrl, 
+			javaType=String, jdbcType=VARCHAR}, #{ yearNum, javaType=String, jdbcType=VARCHAR}, 
+			#{ createtime, javaType=String, jdbcType=VARCHAR}, #{ personNum, javaType=int, 
+			jdbcType=INTEGER} -->
+		)
+	</insert>
+
+
+	<select id="selectByBiz" resultMap="BaseResultMap" parameterType="String">
+		select *
+		 from  weixin
+		  WHERE 
+		biz=#{biz} 
+	 
+	</select>
+	<select id="selectOne" resultMap="BaseResultMap" parameterType="String">
+		SELECT * FROM  weixin  order by collect asc LIMIT 1;
+	</select>
+
+	<select id="searchList" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG where title like CONCAT('%',#{queryString},'%') or
+		BLOG_CONTENT like
+		CONCAT('%',#{queryString},'%') or author like
+		CONCAT('%',#{queryString},'%') order by UPDATE_DATE desc
+		LIMIT #{
+		firstResult} , #{
+		maxResults}
+	</select>
+
+
+	
+	  <update id="updateByPrimaryKey" parameterType="com.service.TestCollect.pojo.WeiXinNumber" >
+    update weixin
+    set
+    		collect=#{ collect, javaType=long, jdbcType=BIGINT}
+	where 
+			biz=#{biz}
+	</update>
+
+	<!-- <select id="selectNum" resultMap="BaseResultMap"
+		parameterType="String">
+		select *
+		from BLOG where USER_ID = #{userId} order BY
+		UPDATE_DATE DESC
+	</select> -->
+
+
+	<!-- <select id="queryId" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG where BLOG_ID=#{blogId} ORDER BY UPDATE_DATE DESC
+	</select>
+ -->
+	<select id="selectNum" resultMap="BaseResultMap" parameterType="String">
+		select COUNT(BLOG_ID) countZan
+		from BLOG_ZANINFO where STATE_STATUS = 1
+	</select>
+
+</mapper>

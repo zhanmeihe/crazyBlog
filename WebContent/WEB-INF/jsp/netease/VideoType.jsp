@@ -24,7 +24,7 @@
 <c:forEach items="${arraytype}" var="listType">
 <script type="text/javascript">
 
-var ff ="http://192.168.1.146:8877/APP/unis/videodetail.PHP?videotype=BoBo";
+var ff ="http://192.168.1.146/APP/unis/videodetail.PHP?videotype=BoBo";
 function stringToHex(ff){
 	var val="";
 	    temp = str.substring(0,7);
@@ -42,7 +42,7 @@ function stringToHex(ff){
 	    }
 	return val;
 	}
-	var str = "http://192.168.1.146:8877/APP/unis/videodetail.PHP?videotype=BoBo"; 
+	var str = "http://192.168.1.146/APP/unis/videodetail.PHP?videotype=BoBo"; 
 	stringToHex(ff);
 	//alert(stringToHex(ff));
 	 

@@ -166,9 +166,9 @@
 </a>  -->   <div class="error">
       <div class="error-block">
   <!-- <img class="main-img" src="https://cdn2.jianshu.io/assets/web/img_404-80cb554db22104d39ab89692e9ebfdb8.png" alt="Img 404" /> -->
-  <h3>您要找的页面不存在</h3>
-  <div class="sub-title">可能是因为您的链接地址有误、该文章已经被作者删除或转为私密状态。</div>
-  <a class="follow" href="<%=request.getContextPath()%>">返回「疯狂博客」首页</a>
+  <h3>您要找的页面不存在4444</h3>
+  <div class="sub-title">可能是因为您的链接地址有误、该文章已经被作者删除或转为私密状态。524243</div>
+  <a class="follow" href="http://www.pioneersv.cn/">返回「疯狂博客」首页</a>
 </div>
 
         <div class="error-footer">

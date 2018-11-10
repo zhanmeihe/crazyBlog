@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.WeiXinArticleDao">
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.WeiXinArticle">
+		<result column="id" property="id" />
+		<result column="biz" property="biz" />
+		<result column="field_id" property="fieldId" />
+		<result column="title" property="title" />
+		<result column="title_encode" property="titleEncode" />
+		<result column="digest" property="digest" />
+		<result column="content_url" property="contentUrl" />
+		<result column="source_url" property="sourceUrl" />
+		<result column="cover" property="cover" />
+		<result column="is_multi" property="isMulti" />
+		<result column="is_top" property="isTop" />
+		<result column="datetime" property="datetime" />
+		<result column="readNum" property="readNum" />
+		<result column="likeNum" property="likeNum" />
+	</resultMap>
+
+	<insert id="create" parameterType="com.service.TestCollect.pojo.WeiXinArticle">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into post
+		(biz,field_id,title,title_encode,digest,content_url,source_url,cover,is_multi,is_top,datetime,readNum,likeNum)
+		values (
+		#{ biz, javaType=String,
+		jdbcType=VARCHAR},
+		#{ fieldId,
+		javaType=int,
+		jdbcType=INTEGER},
+		#{ title, javaType=String,
+		jdbcType=VARCHAR},
+		#{ titleEncode,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		digest, javaType=String,
+		jdbcType=VARCHAR},
+		#{
+		contentUrl, javaType=String,
+		jdbcType=VARCHAR},
+		#{
+		sourceUrl, javaType=String,
+		jdbcType=VARCHAR},
+		#{
+		cover, javaType=String,
+		jdbcType=VARCHAR},
+		#{
+		isMulti, javaType=int,
+		jdbcType=INTEGER},
+		#{
+		isTop, javaType=int,
+		jdbcType=INTEGER},
+		#{
+		datetime, javaType=int,
+		jdbcType=INTEGER},
+		#{
+		readNum, javaType=int,
+		jdbcType=INTEGER},
+		#{
+		likeNum, javaType=int,
+		jdbcType=INTEGER}
+		)
+	</insert>
+
+
+	<select id="selectByContentUrl" resultMap="BaseResultMap" parameterType="String">
+		select *
+		
+		 from  post
+		  WHERE 
+		content_url=#{ content_url} 
+	 
+	</select>
+	<select id="selectByBizAndSn" resultMap="BaseResultMap" parameterType="String">
+		select *
+		 from  post
+		 where biz=#{biz} and like  CONCAT('%',#{sn},'%') 
+		 limit 0,1
+	</select>
+
+	<select id="searchList" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG where title like CONCAT('%',#{queryString},'%') or
+		BLOG_CONTENT like
+		CONCAT('%',#{queryString},'%') or author like
+		CONCAT('%',#{queryString},'%') order by UPDATE_DATE desc
+		LIMIT #{
+		firstResult} , #{
+		maxResults}
+	</select>
+
+
+	
+	  <update id="updateByPrimaryKey" parameterType="com.service.TestCollect.pojo.WeiXinArticle" >
+    update post
+    set
+    		readNum=#{readNum, javaType=int, jdbcType=INTEGER},
+			likeNum=#{ likeNum, javaType=int, jdbcType=INTEGER}
+	where 
+			id=#{id}
+	</update>
+
+	<!-- <select id="selectNum" resultMap="BaseResultMap"
+		parameterType="String">
+		select *
+		from BLOG where USER_ID = #{userId} order BY
+		UPDATE_DATE DESC
+	</select> -->
+
+
+	<!-- <select id="queryId" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG where BLOG_ID=#{blogId} ORDER BY UPDATE_DATE DESC
+	</select>
+ -->
+	<select id="selectNum" resultMap="BaseResultMap" parameterType="String">
+		select COUNT(BLOG_ID) countZan
+		from BLOG_ZANINFO where STATE_STATUS = 1
+	</select>
+
+</mapper>

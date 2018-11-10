@@ -15,7 +15,7 @@ public final class RegexConst {
 
 	public static final String EMAIL = "(^$)|[\\w-]+(\\.[\\w-]+)*@[\\w-]+(\\.[\\w-]+)+";
 
-	public static final String PHOTO = "(^$)|[\\w\\W]*(\\.png$|\\.bmp$|\\.jpg$|\\.jpeg$|\\.gif$/i)";
+	public static final String PHOTO = "(^$)|[\\w\\W]*(\\.png$|\\.bmp$|\\.jpg$|\\.mp4$|\\.avi$|\\.3gp$|\\.rmvb$|\\.jpeg$|\\.gif$/i)";
 
 	public static final String APK_FILE = "(^$)|[\\w\\W]*.apk";
 }

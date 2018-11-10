@@ -196,7 +196,7 @@ public class Tools {
 	  }
 	
 	public static void main(String[] args) throws IOException {
-		System.err.println(source("http://weixin.sogou.com/weixin?type=1&s_from=input&query=%E5%B9%BF%E4%B8%9C", "utf-8"));
+		System.err.println(source("https://www.6949.com/region/AH/p0.html", "utf-8"));
 //		public String getPageSource()
 //		  {
 //		    StringBuffer sb = new StringBuffer();
@@ -256,14 +256,14 @@ public class Tools {
 			URLConnection connection = url.openConnection();
 		//	connection.
 			connection.connect();
-			 connection.setRequestProperty("Connection", "close");
-		        connection.setRequestProperty("Content-Type","text/html; charset=UTF-8");
-		        connection.setRequestProperty("Content-Language", "zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,nb;q=0.6,ja;q=0.5");
-		        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Mobile Safari/537.36");
-		        connection.setRequestProperty("Host", "www.fstv.com.cn");
-		        connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
-		        connection.setRequestProperty("Accept-Encoding", "gzip, deflate, br");
-		        connection.setRequestProperty("Cookie", "PHPSESSID=e1saf1luf10j4kbgg3hbsqlrs2; pgv_pvi=2367410176; pgv_si=s1716564992; Hm_lvt_a85285f9718c6ca87b07d2d671617464=1521362006; Hm_lpvt_a85285f9718c6ca87b07d2d671617464=1521362041");
+//			 connection.setRequestProperty("Connection", "close");
+//		        connection.setRequestProperty("Content-Type","text/html; charset=UTF-8");
+//		        connection.setRequestProperty("Content-Language", "zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7,nb;q=0.6,ja;q=0.5");
+//		        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Mobile Safari/537.36");
+//		        connection.setRequestProperty("Host", "www.fstv.com.cn");
+//		        connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+//		        connection.setRequestProperty("Accept-Encoding", "gzip, deflate, br");
+//		        connection.setRequestProperty("Cookie", "PHPSESSID=e1saf1luf10j4kbgg3hbsqlrs2; pgv_pvi=2367410176; pgv_si=s1716564992; Hm_lvt_a85285f9718c6ca87b07d2d671617464=1521362006; Hm_lpvt_a85285f9718c6ca87b07d2d671617464=1521362041");
 
 //			conn.setRequestProperty(
 //					"User-Agent",

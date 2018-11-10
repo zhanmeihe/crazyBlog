@@ -55,6 +55,7 @@
 	<mvc:resources mapping="/static/style/**" location="/style/" />
 	<mvc:resources mapping="/static/image/**" location="/image/" />
 	<mvc:resources mapping="/400.html" location="/400.html" />
+	<mvc:resources mapping="/baidu_verify_C8z2C6F3Pc.html" location="/baidu_verify_C8z2C6F3Pc.html" />
 
 	<mvc:resources mapping="/test/**" location="/test/" />
 	<mvc:resources mapping="/video/**" location="/video/" />

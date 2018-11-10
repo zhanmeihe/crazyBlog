@@ -49,6 +49,7 @@ public class MD5 {
 		return sBuffer.toString();
 	}
 
+	//----
 	public static String GetMD5Code(String strObj) {
 		String resultString = null;
 		try {
@@ -78,8 +79,10 @@ public class MD5 {
 		return StringUtils.upperCase(resultString);
 	}
 
+	 
 	public static void main(String[] args) {
-		MD5 getMD5 = new MD5();
-		System.out.println(getMD5.GetMD5Code("123", "UTF-8"));
+		 
+		System.out.println(MD5.GetMD5Code("123456"));
+		 
 	}
 }

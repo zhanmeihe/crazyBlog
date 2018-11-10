@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.CollectionTaskDao">
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.CollectionTask">
+		<result column="id" property="id" />
+		<result column="content_url" property="contentUrl" />
+		<result column="loads" property="load" />
+	</resultMap>
+
+	<insert id="create" parameterType="com.service.TestCollect.pojo.CollectionTask">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into tmplist
+		(content_url)
+		values (
+		#{ contentUrl,
+		javaType=String,
+		jdbcType=VARCHAR} 
+
+		)
+	</insert>
+
+
+	<select id="selectRandomOne" resultMap="BaseResultMap"
+		parameterType="String">
+
+		SELECT *
+		FROM `tmplist` AS t1 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(`id`) FROM
+		`tmplist`)-(SELECT MIN(`id`) FROM `tmplist`))+(SELECT MIN(`id`)
+		FROM `tmplist`)) AS `id`) AS t2
+		WHERE t1.`id` >= t2.`id`
+		ORDER BY t1.`id` LIMIT 1;
+
+	</select>
+	<select id="indexquery" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG order by UPDATE_DATE desc
+		LIMIT #{ firstResult} , #{
+		maxResults}
+	</select>
+
+	<select id="searchList" resultMap="BaseResultMap" parameterType="String">
+		select *
+		from BLOG where title like CONCAT('%',#{queryString},'%') or
+		BLOG_CONTENT like
+		CONCAT('%',#{queryString},'%') or author like
+		CONCAT('%',#{queryString},'%') order by UPDATE_DATE desc
+		LIMIT #{
+		firstResult} , #{
+		maxResults}
+	</select>
+
+
+
+	<update id="updateByContentUrl" parameterType="com.service.TestCollect.pojo.CollectionTask">
+	
+		update tmplist set 
+		loads=#{
+		load, javaType=int, jdbcType=INTEGER}
+		
+		  where content_url =#{contentUrl}
+	</update>
+	
+	
+	<update id="updateByPrimaryKey" parameterType="com.service.TestCollect.pojo.CollectionTask">
+	
+		update tmplist set 
+		loads=#{
+		load, javaType=int, jdbcType=INTEGER}
+		
+		  where content_url =#{contentUrl}
+	</update>
+	<delete id="deleteByLoad" parameterType="com.service.TestCollect.pojo.CollectionTask">
+
+		DELETE FROM `tmplist` WHERE `loads` =#{ load}
+
+	</delete>
+	
+	<delete id="deleteBySn" parameterType="com.service.TestCollect.pojo.CollectionTask">
+
+		DELETE FROM `tmplist` WHERE  content_url like CONCAT('%',#{sn},'%') 
+
+	</delete>
+	<!-- <select id="selectNum" resultMap="BaseResultMap" parameterType="String"> 
+		select * from BLOG where USER_ID = #{userId} order BY UPDATE_DATE DESC </select> -->
+
+
+	<!-- <select id="queryId" resultMap="BaseResultMap" parameterType="String"> 
+		select * from BLOG where BLOG_ID=#{blogId} ORDER BY UPDATE_DATE DESC </select> -->
+	<select id="selectMany" resultMap="BaseResultMap" parameterType="String">
+		select  *
+		from tmplist order by id asc LIMIT 5;
+	</select>
+
+</mapper>

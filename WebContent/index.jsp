@@ -5,7 +5,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>跳转页~~</title>
+<meta name="keywords" content="疯狂博客" />
+<meta name="description" content="疯狂博客" />
+<title>疯狂博客</title>
 </head>
 <body>
 
