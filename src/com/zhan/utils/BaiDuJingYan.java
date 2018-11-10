@@ -12,7 +12,7 @@ public class BaiDuJingYan implements PageProcessor {
 	
 	private Site site = Site.me().setRetryTimes(3).setSleepTime(100);
 
-	// 计数器
+	// 计数器 
 
 	private static int count = 0;
 
