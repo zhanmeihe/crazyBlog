@@ -1,22 +1,8 @@
 select t.DUPLICATE_CHANNEL_ID from tbl_duplicate_channel t where t.org_id = 8 and t.channel_name = '瓢虫汇-15街'	
          		result = compare(org, six);
          		
-         		for(String sf : result){
-         			System.err.println("地市比中心多*****"+sf);
+         		
          		 
-         			pre = conn.prepareStatement(sqlr);
-         			pre.setInt(1, 11);
-					pre.setInt(2, 2);
-					pre.setInt(3, 1);
-					pre.setString(4,sf );
-					pre.setString(5, "地市比中心多");
-					pre.setInt(6, orgid);
-					 String orgname = "select org_name from tbl_terminal_unit x where org_id = "+orgid;
-					 rs = stmt.executeQuery(orgname);
-					 boolean d =  rs.next();
-	                 if(d){
-	                	 pre.setString(7, rs.getString(1));
-	                 }else{
 	                	 pre.setString(7, "");
 	                 }
 	                	 rs.close();
