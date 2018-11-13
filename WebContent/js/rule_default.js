@@ -147,9 +147,9 @@ module.exports = {
                      HttpPost(ret[1],req.url,"/crazy_blog/getMsgJson");//这个函数是后文定义的，将匹配到的历史消息json发送到自己的服务器
                      var http = require('http');
                      
-                     http.get('http://192.168.0.103/crazy_blog/getWxHis', function(res) {//这个地址是自己服务器上的一个程序，目的是为了获取到下一个链接地址，将地址放在一个js脚本中，将页面自动跳转到下一页。后文将介绍getWxHis.php的原理。
+                     http.get('http://192.168.1.121/crazy_blog/getWxHis', function(res) {//这个地址是自己服务器上的一个程序，目的是为了获取到下一个链接地址，将地址放在一个js脚本中，将页面自动跳转到下一页。后文将介绍getWxHis.php的原理。
                          res.on('data', function(chunk){
-                        	 console.log("*********正则匹配成功*****"+serverResData);
+                        	 console.log("*********正则匹配成功*****");
                         	 callback(chunk+serverResData);//将返回的代码插入到历史消息页面中，并返回显示出来
                          })
                      });
@@ -158,7 +158,7 @@ module.exports = {
                          var json = JSON.parse(serverResData.toString());
                          if (json.general_msg_list != []) {
                          HttpPost(json.general_msg_list,req.url,"/crazy_blog/getMsgJson");//这个函数和上面的一样是后文定义的，将第二页历史消息的json发送到自己的服务器
-                         console.log("************则没有匹配到**************"+serverResData);
+                         console.log("************则没有匹配到**************");
                          }
                       }catch(e){
                         console.log(e);//错误捕捉
@@ -172,9 +172,9 @@ module.exports = {
                  var ret = reg.exec(serverResData.toString());//转换变量为string
                  HttpPost(ret[1],req.url,"/crazy_blog/getMsgJson");//这个函数是后文定义的，将匹配到的历史消息json发送到自己的服务器
                  var http = require('http');
-                 http.get('http://192.168.0.103/crazy_blog/getWxHis', function(res) {//这个地址是自己服务器上的一个程序，目的是为了获取到下一个链接地址，将地址放在一个js脚本中，将页面自动跳转到下一页。后文将介绍getWxHis.php的原理。
+                 http.get('http://192.168.1.121/crazy_blog/getWxHis', function(res) {//这个地址是自己服务器上的一个程序，目的是为了获取到下一个链接地址，将地址放在一个js脚本中，将页面自动跳转到下一页。后文将介绍getWxHis.php的原理。
                      res.on('data', function(chunk){
-                    	 console.log("************公众号历史消息(没有翻页Home)**************"+serverResData);
+                    	 console.log("************公众号历史消息(没有翻页Home)**************"+chunk+serverResData);
                          callback(chunk+serverResData);//将返回的代码插入到历史消息页面中，并返回显示出来
                      })
                  });
@@ -186,7 +186,7 @@ module.exports = {
                  var json = JSON.parse(serverResData.toString());
                  if (json.general_msg_list != []) {
                      HttpPost(json.general_msg_list,req.url,"/crazy_blog/getMsgJson");//这个函数和上面的一样是后文定义的，将第二页历史消息的json发送到自己的服务器
-                     console.log("************公众号历史消息(翻页后的json)**************"+serverResData);
+                     console.log("************公众号历史消息(翻页后的json)**************");
                  }
              }catch(e){
                  console.log(e);
@@ -194,7 +194,8 @@ module.exports = {
              callback(serverResData);
          }else if(/mp\/getappmsgext/i.test(req.url)){//当链接地址为公众号文章阅读量和点赞量时
              try {
-                 HttpPost(serverResData,req.url,"/crazy_blog/getMsgExt");//函数是后文定义的，功能是将文章阅读量点赞量的json发送到服务器
+            	 var haeder = JSON.stringify(req.headers);
+                 HttpPost(serverResData+'skip'+haeder,req.url,"/crazy_blog/getMsgExt");//函数是后文定义的，功能是将文章阅读量点赞量的json发送到服务器
                  console.log("*********文章阅读量和点赞量**********");
              }catch(e){
 
@@ -203,17 +204,21 @@ module.exports = {
          }else if(/s\?__biz/i.test(req.url) || /mp\/rumor/i.test(req.url)){//当链接地址为公众号文章时（rumor这个地址是公众号文章被辟谣了）
              try {
                  var http = require('http');
-                 http.get('http://192.168.0.103/crazy_blog/getWxPost', function(res) {//这个地址是自己服务器上的另一个程序，目的是为了获取到下一个链接地址，将地址放在一个js脚本中，将页面自动跳转到下一页。后文将介绍getWxPost.php的原理。
+                 http.get('http://192.168.1.121/crazy_blog/getWxPost', function(res) {//这个地址是自己服务器上的另一个程序，目的是为了获取到下一个链接地址，将地址放在一个js脚本中，将页面自动跳转到下一页。后文将介绍getWxPost.php的原理。
                      res.on('data', function(chunk){
                          callback(chunk+serverResData);
-                         console.log("*********公众号文章详情**********"+serverResData);
+                         console.log("*********公众号文章详情**********"+chunk+serverResData);
                      })
                  });
              }catch(e){
+            	 console.log("*********异常公众号文章详情**********");
                  callback(serverResData);
+                 
              }
          }else{
+        	 console.log("*********其他公众号文章详情**********");
              callback(serverResData);
+             
          }
     },
 

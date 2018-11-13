@@ -96,6 +96,7 @@ import com.zhan.utils.HttpUrlParser;
 import com.zhan.utils.Ignore;
 import com.zhan.utils.MD5;
 import com.zhan.utils.MD5Utils;
+import com.zhan.utils.Main;
 import com.zhan.utils.MaptoListUtils;
 import com.zhan.utils.PeanUtils;
 import com.zhan.utils.PerimageUtils;
@@ -149,6 +150,19 @@ public class DoMainController implements Runnable {
 	private WeiXinArticleDao weiXinArticleDao;
 	@Resource
 	private CollectionTaskDao collectionTaskDao;
+	
+	@RequestMapping(value = "/getProxy", method = RequestMethod.GET)
+	public void getProxy(HttpServletResponse response) {
+		
+		try {
+			System.err.println("代理开始.......");
+			Main.ProxyIp();
+		} catch (UnisException e) {
+			LOGGER.error("异常", e);
+		}catch (Exception e) {
+			LOGGER.error("异常", e);
+		}
+	}
 
 	@RequestMapping(value = "/getWxHis", method = RequestMethod.GET)
 	public void getWxHis(HttpServletResponse response) {
@@ -215,7 +229,7 @@ public class DoMainController implements Runnable {
 	}
 
 	@RequestMapping(value = "/getMsgExt", method = RequestMethod.POST)
-	public void getMsgExt(@RequestParam(value = "str") String str, @RequestParam(value = "url") String url,
+	public String getMsgExt(@RequestParam(value = "str") String str, @RequestParam(value = "url") String url,
 
 			HttpServletRequest request, HttpServletResponse response, Model model) {
 
@@ -275,6 +289,7 @@ public class DoMainController implements Runnable {
 //			weiXinArticleDao.updateByPrimaryKey(post);
 //         
 			//end
+			return "redirect:/getWxPost";
 		} catch (UnisException e) {
 			model.addAttribute("errormsg", e);
 			LOGGER.info("异常", e);
@@ -282,6 +297,7 @@ public class DoMainController implements Runnable {
 			model.addAttribute("errormsg", e);
 			LOGGER.error("异常", e);
 		}
+		return "redirect:/getWxPost";
 	}
 
 	@RequestMapping(value = "/getWxPost", method = RequestMethod.GET)
