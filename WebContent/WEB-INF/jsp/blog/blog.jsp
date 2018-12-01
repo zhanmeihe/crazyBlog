@@ -120,7 +120,7 @@
 	</script>
 
 	<div class="topnav">
-		<a href="http://www.yangqq.com/download/div/2017-07-16/785.html"
+		<a href="http://www.pioneersv.cn/download/div/2017-07-16/785.html"
 			target="_blank">疯狂博客</a>――作品来自<a href="http://www.pioneersv.cn"
 			target="_blank">占美和个人博客网站</a>
 

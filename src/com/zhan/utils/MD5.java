@@ -82,7 +82,7 @@ public class MD5 {
 	 
 	public static void main(String[] args) {
 		 
-		System.out.println(MD5.GetMD5Code("123456"));
+		System.out.println(MD5.GetMD5Code("018654220309438073192.168.1.123androidandroidcommon:102011000111543316623615","UTF-8"));
 		 
 	}
 }

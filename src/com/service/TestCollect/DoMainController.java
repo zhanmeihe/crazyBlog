@@ -150,16 +150,16 @@ public class DoMainController implements Runnable {
 	private WeiXinArticleDao weiXinArticleDao;
 	@Resource
 	private CollectionTaskDao collectionTaskDao;
-	
+
 	@RequestMapping(value = "/getProxy", method = RequestMethod.GET)
 	public void getProxy(HttpServletResponse response) {
-		
+
 		try {
 			System.err.println("代理开始.......");
 			Main.ProxyIp();
 		} catch (UnisException e) {
 			LOGGER.error("异常", e);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			LOGGER.error("异常", e);
 		}
 	}
@@ -172,8 +172,8 @@ public class DoMainController implements Runnable {
 			String url = "";
 			// TODO Auto-generated method stub
 			/**
-			 * 当前页面为公众号历史消息时，读取这个程序 在采集队列表中有一个load字段，当值等于1时代表正在被读取
-			 * 首先删除采集队列表中load=1的行 然后从队列表中任意select一行
+			 * 当前页面为公众号历史消息时，读取这个程序 在采集队列表中有一个load字段，当值等于1时代表正在被读取 首先删除采集队列表中load=1的行
+			 * 然后从队列表中任意select一行
 			 */
 			Thread.sleep(700);
 			collectionTaskDao.deleteByLoad(1);
@@ -182,16 +182,16 @@ public class DoMainController implements Runnable {
 			System.out.println("queue is null?" + queue);
 			if (queue == null) {// 队列表为空
 				/**
-				 * 队列表如果空了，就从存储公众号biz的表中取得一个biz，
-				 * 这里我在公众号表中设置了一个采集时间的time字段，按照正序排列之后， 就得到时间戳最小的一个公众号记录，并取得它的biz
+				 * 队列表如果空了，就从存储公众号biz的表中取得一个biz， 这里我在公众号表中设置了一个采集时间的time字段，按照正序排列之后，
+				 * 就得到时间戳最小的一个公众号记录，并取得它的biz
 				 */
-				
+
 				WeiXinNumber weiXin = weiXinNumberDao.selectOne();
 				if (null == weiXin) {
 					System.err.println("等待一会。。。");
 					weiXin = weiXinNumberDao.selectOne();
 				}
-				
+
 				String biz = weiXin.getBiz();
 				url = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=" + biz + "#wechat_redirect";// 拼接公众号历史消息url地址（第二种页面形式）
 				// 更新刚才提到的公众号表中的采集时间time字段为当前时间戳。
@@ -209,9 +209,13 @@ public class DoMainController implements Runnable {
 			// 将下一个将要跳转的$url变成js脚本，由anyproxy注入到微信页面中。
 			// echo
 			// "<script>setTimeout(function(){window.location.href='".$url."';},2000);</script>";
+
+			url = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=" + "MjM5NjE1MDkwMA=="
+					+ "#wechat_redirect";// 拼接公众号历史消息url地址（第二种页面形式）
 			int randomTime = new Random().nextInt(3) + 3;
 			String jsCode = "<script>setTimeout(function(){window.location.href='" + url + "';}," + randomTime * 1000
 					+ ");</script>";
+			//jsCode = "<script type=\"text/javascript\">var end = document.createElement(\"p\");document.body.appendChild(end);(function scrollDown(){end.scrollIntoView();var loadMore = document.getElementsByClassName(\"loadmore with_line\")[0];if (!loadMore.style.display) {document.body.scrollIntoView();var meta = document.createElement(\"meta\");meta.httpEquiv = \"refresh\";meta.content = \"10;url=' + nextProLink + '\";document.head.appendChild(meta);} else {setTimeout(scrollDown,Math.floor(Math.random()*2000+1000));}})();</script>";
 			System.err.println("返回到微信页面getWxHis：" + jsCode);
 			PrintWriter out = response.getWriter();
 			out.println(jsCode);
@@ -252,10 +256,10 @@ public class DoMainController implements Runnable {
 
 			}
 			/**
-			 * $sql = "select * from `文章表` where `biz`='".$biz."' and
-			 * `content_url` like '%".$sn."%'" limit 0,1; 根据biz和sn找到对应的文章
+			 * $sql = "select * from `文章表` where `biz`='".$biz."' and `content_url` like
+			 * '%".$sn."%'" limit 0,1; 根据biz和sn找到对应的文章
 			 */
-			//start
+			// start
 //			WeiXinArticle post = weiXinArticleDao.selectByBizAndSn(biz, sn);
 //
 //			if (post == null) {
@@ -288,7 +292,7 @@ public class DoMainController implements Runnable {
 //			post.setLikeNum(like_num);
 //			weiXinArticleDao.updateByPrimaryKey(post);
 //         
-			//end
+			// end
 			return "redirect:/getWxPost";
 		} catch (UnisException e) {
 			model.addAttribute("errormsg", e);
@@ -341,6 +345,7 @@ public class DoMainController implements Runnable {
 			int randomTime = new Random().nextInt(3) + 3;
 			String jsCode = "<script>setTimeout(function(){window.location.href='" + url + "';}," + randomTime * 1000
 					+ ");</script>";
+			jsCode = url;
 			System.err.println("返回到微信页面getWxPost：" + jsCode);
 			PrintWriter out = response.getWriter();
 			out.println(jsCode);
@@ -349,7 +354,7 @@ public class DoMainController implements Runnable {
 		} catch (UnisException e) {
 
 			LOGGER.info("异常", e);
-			 
+
 		} catch (Exception e) {
 
 			LOGGER.error("异常", e);
@@ -478,8 +483,7 @@ public class DoMainController implements Runnable {
 							}
 							if (!contentUrlExist) {// '数据库中不存在相同的$content_url'
 								/**
-								 * 在这里将图文消息链接地址插入到采集队列库中
-								 * （队列库将在后文介绍，主要目的是建立一个批量采集队列，
+								 * 在这里将图文消息链接地址插入到采集队列库中 （队列库将在后文介绍，主要目的是建立一个批量采集队列，
 								 * 另一个程序将根据队列安排下一个采集的公众号或者文章内容）
 								 */
 								if (content_url != null && !"".equals(content_url)) {
@@ -2341,8 +2345,8 @@ public class DoMainController implements Runnable {
 		String url = "";
 		// TODO Auto-generated method stub
 		/**
-		 * 当前页面为公众号历史消息时，读取这个程序 在采集队列表中有一个load字段，当值等于1时代表正在被读取
-		 * 首先删除采集队列表中load=1的行 然后从队列表中任意select一行
+		 * 当前页面为公众号历史消息时，读取这个程序 在采集队列表中有一个load字段，当值等于1时代表正在被读取 首先删除采集队列表中load=1的行
+		 * 然后从队列表中任意select一行
 		 */
 		collectionTaskDao.deleteByLoad(1);
 		CollectionTask queue = collectionTaskDao.selectRandomOne();
@@ -2389,8 +2393,8 @@ public class DoMainController implements Runnable {
 			sn = "%" + sn + "%";
 		}
 		/**
-		 * $sql = "select * from `文章表` where `biz`='".$biz."' and `content_url`
-		 * like '%".$sn."%'" limit 0,1; 根据biz和sn找到对应的文章
+		 * $sql = "select * from `文章表` where `biz`='".$biz."' and `content_url` like
+		 * '%".$sn."%'" limit 0,1; 根据biz和sn找到对应的文章
 		 */
 		// Post post = postMapper.selectByBizAndSn(biz, sn);
 		Post post = null;
@@ -2417,8 +2421,8 @@ public class DoMainController implements Runnable {
 		}
 
 		/**
-		 * 在这里同样根据sn在采集队列表中删除对应的文章，代表这篇文章可以移出采集队列了 $sql = "delete from `队列表`
-		 * where `content_url` like '%".$sn."%'"
+		 * 在这里同样根据sn在采集队列表中删除对应的文章，代表这篇文章可以移出采集队列了 $sql = "delete from `队列表` where
+		 * `content_url` like '%".$sn."%'"
 		 */
 		// tmpListMapper.deleteBySn(sn);
 

@@ -1,5 +1,4 @@
 
-<script>setTimeout(function(){window.location.href='http://mp.weixin.qq.com/s?__biz=MjM5Nzg1NTQyMQ==&mid=2677709188&idx=5&sn=59b397d99016be3ba6e2f955493c6daa&chksm=bcbd90568bca1940b6e776580ff84c13b6bdb8eba6f4a0c47e946d2e91a0ed5b559f7cec2301&scene=27#wechat_redirect';},3000);</script>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -80,6 +79,7 @@
      
      
      function validateForm() {
+    	 alert("1");
  		var username = $.trim($('input[name="userName"]').val());
  		var password = $.trim($('input[name="passWord"]').val());
  		var checkcode = $.trim($('input[name="checkCode"]').val());
@@ -141,10 +141,8 @@
 							    type : 'POST', 
 							    //dataType : 'json', 
 							    async:true, 
-							    success : function(data) {//这是个回调函数 data表示从action中传过来的json数据
-								
-							    window.location = "<%=request.getContextPath()%>
-	";
+							    success : function(data) {//这是个回调函数 data表示从action中传过来的json数据								
+							    window.location = "<%=request.getContextPath()%>";
 						}
 					});
 				} else {
@@ -180,7 +178,7 @@
 
 					<form id="handleform"
 						action="<%=request.getContextPath()%>/Userinfo/blogRegistr"
-						method="post" onsubmit="return validateForm();">
+						method="post"  >
 						<ul class="step2_list">
 							<li><input type="text" class="iphone" id="name"
 								name="userName" placeholder="输入手机号"></li>
@@ -206,7 +204,7 @@
 						</ul>
 						<!-- <input type="hidden" name="fkid" id="fkid" value="" /> -->
 						<input id="regist" accesskey="l" value="注册提交" tabindex="6"
-							type="submit" class="next_btn regist">
+							type="submit" class="next_btn regist" onclick="return validateForm()">
 						<!-- data-kuick='{"act":"csdn06","desc":"下一步:提交注册信息"}' -->
 					</form>
 				</div>
