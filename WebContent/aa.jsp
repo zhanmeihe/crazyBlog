@@ -1,0 +1,1 @@
+<script>setTimeout(function(){window.location.href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MjM5NjE1MDkwMA==#wechat_redirect';},3000);</script>
