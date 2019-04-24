@@ -19,19 +19,18 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -46,12 +45,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-import com.google.code.kaptcha.Producer;
 import com.jayway.jsonpath.JsonPath;
 import com.service.TestCollect.dao.BlogInfoDao;
 import com.service.TestCollect.dao.BlogUserDao;
 import com.service.TestCollect.dao.CollectionTaskDao;
 import com.service.TestCollect.dao.CommentDao;
+import com.service.TestCollect.dao.CommentZanDao;
 import com.service.TestCollect.dao.MyorderInfoDao;
 import com.service.TestCollect.dao.PraiseDao;
 import com.service.TestCollect.dao.TaskInfoDao;
@@ -64,6 +63,7 @@ import com.service.TestCollect.pojo.BlogInfo;
 import com.service.TestCollect.pojo.BlogUser;
 import com.service.TestCollect.pojo.CollectionTask;
 import com.service.TestCollect.pojo.Comment;
+import com.service.TestCollect.pojo.CommentZan;
 import com.service.TestCollect.pojo.MyorderInfo;
 import com.service.TestCollect.pojo.Praise;
 import com.service.TestCollect.pojo.SNSUserInfo;
@@ -75,6 +75,7 @@ import com.service.TestCollect.pojo.WeiXinArticle;
 import com.service.TestCollect.pojo.WeiXinNumber;
 import com.service.TestCollect.pojo.WeixinOauth2Token;
 import com.service.TestCollect.pojo.WorkVideo;
+import com.service.TestCollect.service.CSDNSpider;
 import com.service.TestCollect.service.NeteaseVideoService;
 import com.service.TestCollect.weixinutils.AdvancedUtil;
 import com.zhan.ex.RuleException;
@@ -107,7 +108,9 @@ import com.zhan.utils.TmpList;
 import com.zhan.utils.TmpListMapper;
 import com.zhan.utils.Tools;
 import com.zhan.utils.WeiXin;
-import com.zhan.utils.WeiXinDataUtils;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * 
@@ -118,10 +121,14 @@ import com.zhan.utils.WeiXinDataUtils;
 public class DoMainController implements Runnable {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(DoMainController.class);
-	/**
+	//private static Class<Logger> LOGGER  = Logger.class;
+	 
+ 	/**
 	 * 初始化获取阅读数所需要的参数{biz}
 	 */
 	private String biz = "";
+
+	private static int line = 0;
 	/**
 	 * 初始化获取阅读数所需要的参数{biz}
 	 */
@@ -150,6 +157,8 @@ public class DoMainController implements Runnable {
 	private WeiXinArticleDao weiXinArticleDao;
 	@Resource
 	private CollectionTaskDao collectionTaskDao;
+	@Resource
+	private CommentZanDao commentZanDao;
 
 	@RequestMapping(value = "/getProxy", method = RequestMethod.GET)
 	public void getProxy(HttpServletResponse response) {
@@ -185,13 +194,10 @@ public class DoMainController implements Runnable {
 				 * 队列表如果空了，就从存储公众号biz的表中取得一个biz， 这里我在公众号表中设置了一个采集时间的time字段，按照正序排列之后，
 				 * 就得到时间戳最小的一个公众号记录，并取得它的biz
 				 */
-
 				WeiXinNumber weiXin = weiXinNumberDao.selectOne();
 				if (null == weiXin) {
-					System.err.println("等待一会。。。");
 					weiXin = weiXinNumberDao.selectOne();
 				}
-
 				String biz = weiXin.getBiz();
 				url = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=" + biz + "#wechat_redirect";// 拼接公众号历史消息url地址（第二种页面形式）
 				// 更新刚才提到的公众号表中的采集时间time字段为当前时间戳。
@@ -206,16 +212,12 @@ public class DoMainController implements Runnable {
 				// 将load字段update为1
 				collectionTaskDao.updateByContentUrl(queue);
 			}
-			// 将下一个将要跳转的$url变成js脚本，由anyproxy注入到微信页面中。
-			// echo
-			// "<script>setTimeout(function(){window.location.href='".$url."';},2000);</script>";
-
-			url = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=" + "MjM5NjE1MDkwMA=="
-					+ "#wechat_redirect";// 拼接公众号历史消息url地址（第二种页面形式）
+			// url = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=" +
+			// "MjM5NjE1MDkwMA=="
+//					+ "#wechat_redirect";// 拼接公众号历史消息url地址（第二种页面形式）
 			int randomTime = new Random().nextInt(3) + 3;
 			String jsCode = "<script>setTimeout(function(){window.location.href='" + url + "';}," + randomTime * 1000
 					+ ");</script>";
-			//jsCode = "<script type=\"text/javascript\">var end = document.createElement(\"p\");document.body.appendChild(end);(function scrollDown(){end.scrollIntoView();var loadMore = document.getElementsByClassName(\"loadmore with_line\")[0];if (!loadMore.style.display) {document.body.scrollIntoView();var meta = document.createElement(\"meta\");meta.httpEquiv = \"refresh\";meta.content = \"10;url=' + nextProLink + '\";document.head.appendChild(meta);} else {setTimeout(scrollDown,Math.floor(Math.random()*2000+1000));}})();</script>";
 			System.err.println("返回到微信页面getWxHis：" + jsCode);
 			PrintWriter out = response.getWriter();
 			out.println(jsCode);
@@ -343,9 +345,11 @@ public class DoMainController implements Runnable {
 				System.out.println("getPost weiXin updateResult:" + 1);
 			}
 			int randomTime = new Random().nextInt(3) + 3;
+			url = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MjM5NjE1MDkwMA==#wechat_redirect";
 			String jsCode = "<script>setTimeout(function(){window.location.href='" + url + "';}," + randomTime * 1000
 					+ ");</script>";
-			jsCode = url;
+			// jsCode = url;
+
 			System.err.println("返回到微信页面getWxPost：" + jsCode);
 			PrintWriter out = response.getWriter();
 			out.println(jsCode);
@@ -362,169 +366,203 @@ public class DoMainController implements Runnable {
 	}
 
 	@RequestMapping(value = "/getMsgJson", method = RequestMethod.POST)
-	public void getMsgJson(@RequestParam(value = "str") String str, @RequestParam(value = "url") String url,
+	public ModelAndView getMsgJson(@RequestParam(value = "str") String str, @RequestParam(value = "url") String url,
 
 			HttpServletRequest request, HttpServletResponse response, Model model) {
 
 		try {
 
-			// DoMainController wxd = new DoMainController();
 			str = URLDecoder.decode(str, "UTF-8").replace("&quot;", "\"").replace("\\", "");
 			url = URLDecoder.decode(url, "UTF-8").replace("&quot;", "\"").replace("\\", "");
-			System.err.println(str);
-			System.err.println(url);
-			// wxd.getMsgJson1(URLDecoder.decode(str, "UTF-8").replace("&quot;",
-			// "\"").replace("\\", ""),
-			// URLDecoder.decode(url, "UTF-8").replace("&quot;",
-			// "\"").replace("\\", ""));
-			// TODO Auto-generated method stub
-			String biz = "";
-			Map<String, String> queryStrs = parseUrl(url);
-			if (queryStrs != null) {
-				biz = queryStrs.get("__biz");
-				// biz = biz + "==";
-			}
-			/**
-			 * 从数据库中查询biz是否已经存在，如果不存在则插入， 这代表着我们新添加了一个采集目标公众号。
-			 */
-			List<WeiXinNumber> results = new ArrayList<>();
-
-			results = weiXinNumberDao.selectByBiz(biz);
-			if (results == null || results.size() == 0) {
-				WeiXinNumber wxd = new WeiXinNumber();
-				wxd.setBiz(biz);
-				wxd.setCollect(System.currentTimeMillis());
-				weiXinNumberDao.create(wxd);
-			}
-			// 解析str变量
-
-			List<Object> lists = JsonPath.read(str, "['list']");
-			for (Object list : lists) {
-				Object json = list;
-				int type = JsonPath.read(json, "['comm_msg_info']['type']");
-				if (type == 49) {// type=49表示是图文消息
-					String content_url = JsonPath.read(json, "$.app_msg_ext_info.content_url");
-					content_url = content_url.replace("\\", "").replaceAll("amp;", "");// 获得图文消息的链接地址
-					int is_multi = JsonPath.read(json, "$.app_msg_ext_info.is_multi");// 是否是多图文消息
-					Integer datetime = JsonPath.read(json, "$.comm_msg_info.datetime");// 图文消息发送时间
+			boolean re = true;
+			while (re) {
+				if (!str.equals("")) {
+					DoMainController.line = 2;
+					System.err.println(str);
+					System.err.println(url);
+					// wxd.getMsgJson1(URLDecoder.decode(str, "UTF-8").replace("&quot;",
+					// "\"").replace("\\", ""),
+					// URLDecoder.decode(url, "UTF-8").replace("&quot;",
+					// "\"").replace("\\", ""));
+					// TODO Auto-generated method stub
+					String biz = "";
+					Map<String, String> queryStrs = parseUrl(url);
+					if (queryStrs != null) {
+						biz = queryStrs.get("__biz");
+						// biz = biz + "==";
+					}
 					/**
-					 * 在这里将图文消息链接地址插入到采集队列库tmplist中 （队列库将在后文介绍，主要目的是建立一个批量采集队列，
-					 * 另一个程序将根据队列安排下一个采集的公众号或者文章内容）
+					 * 从数据库中查询biz是否已经存在，如果不存在则插入， 这代表着我们新添加了一个采集目标公众号。
 					 */
-					try {
-						if (content_url != null && !"".equals(content_url)) {
-							CollectionTask tmpList = new CollectionTask();
-							tmpList.setContentUrl(content_url);
-							collectionTaskDao.create(tmpList);
-						}
-					} catch (Exception e) {
-						System.out.println("队列已存在,不插入！");
+					List<WeiXinNumber> results = new ArrayList<>();
+
+					results = weiXinNumberDao.selectByBiz(biz);
+					if (results == null || results.size() == 0) {
+						WeiXinNumber wxd = new WeiXinNumber();
+						wxd.setBiz(biz);
+						wxd.setCollect(System.currentTimeMillis());
+						weiXinNumberDao.create(wxd);
 					}
+					// 解析str变量
 
-					/**
-					 * 在这里根据$content_url从数据库post中判断一下是否重复
-					 */
-					List<WeiXinArticle> postList = weiXinArticleDao.selectByContentUrl(content_url);
-
-					boolean contentUrlExist = false;
-					if (postList != null && postList.size() != 0) {
-						contentUrlExist = true;
-					}
-
-					if (!contentUrlExist) {// '数据库post中不存在相同的$content_url'
-						Integer fileid = JsonPath.read(json, "$.app_msg_ext_info.fileid");// 一个微信给的id
-						String title = JsonPath.read(json, "$.app_msg_ext_info.title");// 文章标题
-						String title_encode = URLEncoder.encode(title, "utf-8");
-						String digest = JsonPath.read(json, "$.app_msg_ext_info.digest");// 文章摘要
-						String source_url = JsonPath.read(json, "$.app_msg_ext_info.source_url");// 阅读原文的链接
-						source_url = source_url.replace("\\", "");
-						String cover = JsonPath.read(json, "$.app_msg_ext_info.cover");// 封面图片
-						cover = cover.replace("\\", "");
-						/**
-						 * 存入数据库
-						 */
-						System.out.println("头条标题：" + title);
-						System.out.println("微信ID：" + fileid);
-						System.out.println("文章摘要:" + digest);
-						System.out.println("阅读原文链接:" + source_url);
-						System.out.println("封面图片地址:" + cover);
-
-						WeiXinArticle wxa = new WeiXinArticle();
-						wxa.setBiz(biz);
-						wxa.setTitle(title);
-						wxa.setTitleEncode(title_encode);
-						wxa.setFieldId(fileid);
-						wxa.setDigest(digest);
-						wxa.setSourceUrl(source_url);
-						wxa.setCover(cover);
-						wxa.setIsTop(1);// 标记一下是头条内容
-						wxa.setIsMulti(is_multi);
-						wxa.setDatetime(datetime);
-						wxa.setContentUrl(content_url);
-
-						weiXinArticleDao.create(wxa);
-					}
-
-					if (is_multi == 1) {// 如果是多图文消息
-						List<Object> multiLists = JsonPath.read(json,
-								"['app_msg_ext_info']['multi_app_msg_item_list']");
-						for (Object multiList : multiLists) {
-							Object multiJson = multiList;
-							content_url = JsonPath.read(multiJson, "['content_url']").toString().replace("\\", "")
-									.replaceAll("amp;", "");// 图文消息链接地址
+					List<Object> lists = JsonPath.read(str, "['list']");
+					for (Object list : lists) {
+						Object json = list;
+						int type = JsonPath.read(json, "['comm_msg_info']['type']");
+						if (type == 49) {// type=49表示是图文消息
+							String content_url = JsonPath.read(json, "$.app_msg_ext_info.content_url");
+							content_url = content_url.replace("\\", "").replaceAll("amp;", "");// 获得图文消息的链接地址
+							int is_multi = JsonPath.read(json, "$.app_msg_ext_info.is_multi");// 是否是多图文消息
+							Integer datetime = JsonPath.read(json, "$.comm_msg_info.datetime");// 图文消息发送时间
 							/**
-							 * 这里再次根据$content_url判断一下数据库中是否重复以免出错
+							 * 在这里将图文消息链接地址插入到采集队列库tmplist中 （队列库将在后文介绍，主要目的是建立一个批量采集队列，
+							 * 另一个程序将根据队列安排下一个采集的公众号或者文章内容）
 							 */
-							contentUrlExist = false;
-							List<WeiXinArticle> posts = weiXinArticleDao.selectByContentUrl(content_url);
+							try {
+								if (content_url != null && !"".equals(content_url)) {
+									CollectionTask tmpList = new CollectionTask();
+									tmpList.setContentUrl(content_url);
+									collectionTaskDao.create(tmpList);
+								}
+							} catch (Exception e) {
+								System.out.println("队列已存在,不插入！");
+//								if (!str.equals("")) {
+//									str = "";
+//									Const.a = 0;
+//									continue;
+//								} else {
+//									Const.a++;
+//									Thread.sleep(500);
+//									if (Const.a == 300) {
+//										System.err.println("开始执行下一个公众号"+Const.a);
+//									}
+//								}
 
-							if (posts != null && posts.size() != 0) {
+							}
+
+							/**
+							 * 在这里根据$content_url从数据库post中判断一下是否重复
+							 */
+							List<WeiXinArticle> postList = weiXinArticleDao.selectByContentUrl(content_url);
+
+							boolean contentUrlExist = false;
+							if (postList != null && postList.size() != 0) {
 								contentUrlExist = true;
 							}
-							if (!contentUrlExist) {// '数据库中不存在相同的$content_url'
-								/**
-								 * 在这里将图文消息链接地址插入到采集队列库中 （队列库将在后文介绍，主要目的是建立一个批量采集队列，
-								 * 另一个程序将根据队列安排下一个采集的公众号或者文章内容）
-								 */
-								if (content_url != null && !"".equals(content_url)) {
-									CollectionTask tmpListT = new CollectionTask();
-									tmpListT.setContentUrl(content_url);
-									collectionTaskDao.create(tmpListT);
-								}
 
-								String title = JsonPath.read(multiJson, "$.title");
+							if (!contentUrlExist) {// '数据库post中不存在相同的$content_url'
+								Integer fileid = JsonPath.read(json, "$.app_msg_ext_info.fileid");// 一个微信给的id
+								String title = JsonPath.read(json, "$.app_msg_ext_info.title");// 文章标题
 								String title_encode = URLEncoder.encode(title, "utf-8");
-								Integer fileid = JsonPath.read(multiJson, "$.fileid");
-								String digest = JsonPath.read(multiJson, "$.digest");
-								String source_url = JsonPath.read(multiJson, "$.source_url");
+								String digest = JsonPath.read(json, "$.app_msg_ext_info.digest");// 文章摘要
+								String source_url = JsonPath.read(json, "$.app_msg_ext_info.source_url");// 阅读原文的链接
 								source_url = source_url.replace("\\", "");
-								String cover = JsonPath.read(multiJson, "$.cover");
+								String cover = JsonPath.read(json, "$.app_msg_ext_info.cover");// 封面图片
 								cover = cover.replace("\\", "");
-								System.out.println("标题:" + title);
-								System.out.println("微信ID:" + fileid);
+								/**
+								 * 存入数据库
+								 */
+								System.out.println("头条标题：" + title);
+								System.out.println("微信ID：" + fileid);
 								System.out.println("文章摘要:" + digest);
 								System.out.println("阅读原文链接:" + source_url);
 								System.out.println("封面图片地址:" + cover);
-								WeiXinArticle post = new WeiXinArticle();
-								post.setBiz(biz);
-								post.setTitle(title);
-								post.setTitleEncode(title_encode);
-								post.setFieldId(fileid);
-								post.setDigest(digest);
-								post.setSourceUrl(source_url);
-								post.setCover(cover);
-								post.setIsTop(0);// 标记一下不是头条内容
-								post.setIsMulti(is_multi);
-								post.setDatetime(datetime);
-								post.setContentUrl(content_url);
 
-								weiXinArticleDao.create(post);
+								WeiXinArticle wxa = new WeiXinArticle();
+								wxa.setBiz(biz);
+								wxa.setTitle(title);
+								wxa.setTitleEncode(title_encode);
+								wxa.setFieldId(fileid);
+								wxa.setDigest(digest);
+								wxa.setSourceUrl(source_url);
+								wxa.setCover(cover);
+								wxa.setIsTop(1);// 标记一下是头条内容
+								wxa.setIsMulti(is_multi);
+								wxa.setDatetime(datetime);
+								wxa.setContentUrl(content_url);
 
+								weiXinArticleDao.create(wxa);
+							}
+
+							if (is_multi == 1) {// 如果是多图文消息
+								List<Object> multiLists = JsonPath.read(json,
+										"['app_msg_ext_info']['multi_app_msg_item_list']");
+								for (Object multiList : multiLists) {
+									Object multiJson = multiList;
+									content_url = JsonPath.read(multiJson, "['content_url']").toString()
+											.replace("\\", "").replaceAll("amp;", "");// 图文消息链接地址
+									/**
+									 * 这里再次根据$content_url判断一下数据库中是否重复以免出错
+									 */
+									contentUrlExist = false;
+									List<WeiXinArticle> posts = weiXinArticleDao.selectByContentUrl(content_url);
+
+									if (posts != null && posts.size() != 0) {
+										contentUrlExist = true;
+									}
+									if (!contentUrlExist) {// '数据库中不存在相同的$content_url'
+										/**
+										 * 在这里将图文消息链接地址插入到采集队列库中 （队列库将在后文介绍，主要目的是建立一个批量采集队列，
+										 * 另一个程序将根据队列安排下一个采集的公众号或者文章内容）
+										 */
+										if (content_url != null && !"".equals(content_url)) {
+											CollectionTask tmpListT = new CollectionTask();
+											tmpListT.setContentUrl(content_url);
+											collectionTaskDao.create(tmpListT);
+										}
+
+										String title = JsonPath.read(multiJson, "$.title");
+										String title_encode = URLEncoder.encode(title, "utf-8");
+										Integer fileid = JsonPath.read(multiJson, "$.fileid");
+										String digest = JsonPath.read(multiJson, "$.digest");
+										String source_url = JsonPath.read(multiJson, "$.source_url");
+										source_url = source_url.replace("\\", "");
+										String cover = JsonPath.read(multiJson, "$.cover");
+										cover = cover.replace("\\", "");
+										System.out.println("标题:" + title);
+										System.out.println("微信ID:" + fileid);
+										System.out.println("文章摘要:" + digest);
+										System.out.println("阅读原文链接:" + source_url);
+										System.out.println("封面图片地址:" + cover);
+										WeiXinArticle post = new WeiXinArticle();
+										post.setBiz(biz);
+										post.setTitle(title);
+										post.setTitleEncode(title_encode);
+										post.setFieldId(fileid);
+										post.setDigest(digest);
+										post.setSourceUrl(source_url);
+										post.setCover(cover);
+										post.setIsTop(0);// 标记一下不是头条内容
+										post.setIsMulti(is_multi);
+										post.setDatetime(datetime);
+										post.setContentUrl(content_url);
+
+										weiXinArticleDao.create(post);
+
+									}
+								}
 							}
 						}
+						// result = false;
+					}
+					str = "";
+					Const.a = 0;
+					continue;
+				} else {
+					Const.a++;
+					Thread.sleep(500);
+					if (Const.a == 300) {
+						PrintWriter out = response.getWriter();
+						System.err.println("开始执行下一个公众号" + Const.a);
+						Const.a = 0;
+						out.println("阿里斯顿哈刘德华卡仕达双卡双待啦");
+						out.flush();
+						out.close();
+
 					}
 				}
 			}
+
 		} catch (UnisException e) {
 			model.addAttribute("errormsg", e);
 			LOGGER.info("异常", e);
@@ -532,6 +570,7 @@ public class DoMainController implements Runnable {
 			model.addAttribute("errormsg", e);
 			LOGGER.error("异常", e);
 		}
+		return null;
 	}
 
 	/**
@@ -669,7 +708,7 @@ public class DoMainController implements Runnable {
 			user.setAddress("");
 			user.setAge(12);
 			user.setCreateDate(CommonUtils.getNowDate());
-			user.setHeadUrl("http://www.pioneersv.cn/common/showImage?fileName=imagefile/system.jpg");
+			user.setHeadUrl("http://www.focode.cn/common/showImage?fileName=imagefile/system.jpg");
 			user.setNickName(nickNmae);
 			user.setPassWord(MD5.GetMD5Code(passWord));
 			user.setSex(0);
@@ -734,11 +773,12 @@ public class DoMainController implements Runnable {
 			}
 
 			model.addAttribute("bloglist", bif);
+			 
 			return "blog/blog";
 		} catch (UnisException e) {
 			LOGGER.info("异常", e);
 		} catch (Exception e) {
-			LOGGER.info("异常", e);
+			 
 		}
 		return null;
 	}
@@ -769,20 +809,26 @@ public class DoMainController implements Runnable {
 			}
 			BlogUser user2 = blogUserDao.queryUser(bo.getUserId());
 
-			String content = PeanUtils.delHTMLTag(bo.getBlogContent().substring(0, 50));
+			int subStringNum = 50;
+			subStringNum= bo.getBlogContent().length()>=50?subStringNum:bo.getBlogContent().length();
+			String content = PeanUtils.delHTMLTag(bo.getBlogContent().substring(0, subStringNum));
 			int num = new ChinesepreNum().chineseCount(bo.getBlogContent());
 			Praise pe = praiseDao.selectNum(blogId);
+			//待优化
+			List<Comment> coc = commentDao.queryCommentAll(0, 1000, blogId);
 			bo.setPraiseCount(pe.getCountZan());
 			model.addAttribute("blogdetail", bo);
 			model.addAttribute("content", content);
 			model.addAttribute("user2", user2);
 			model.addAttribute("user", user);
 			model.addAttribute("num", num);
+			model.addAttribute("pinglunnum", coc.size());
 			return "blog/blogdetail";
 		} catch (UnisException e) {
 			LOGGER.info("异常", e);
 		} catch (Exception e) {
 			LOGGER.info("异常", e);
+			System.err.println(e);
 		}
 		// 异常处理返回
 		// {后期}
@@ -965,9 +1011,183 @@ public class DoMainController implements Runnable {
 		out.close();
 
 	}
+	
+	/**
+	 * 采集CSDN
+	 * @throws InterruptedException 
+	 */
+	@RequestMapping(value = "/spidercsdn",method = RequestMethod.GET)
+	public void SpiderCsdn() throws InterruptedException {
+		
+		try {
+			CSDNSpider sc = new CSDNSpider();
+			 
+			List<String> title = new ArrayList<>();
+			int u = 0;
+			long starttime = System.currentTimeMillis();
+			while (true) {
+
+				for (String url : sc.getlist()) {
+
+					// String data = Tools.getGzipSource(url, "utf-8");
+					JSONObject json = sc.httpGet(url);
+					// JSONObject.fromObject(data);
+					JSONArray list = JSONArray.fromObject(json.get("articles"));
+					for (int i = 0; i < list.size(); i++) {
+						u++;
+						JSONObject ob = JSONObject.fromObject(list.get(i));
+						// content_views
+						// htmledit_views
+						
+						//临时排重
+//						if (title.contains(ob.getString("title"))) {
+//							System.out.println("已经存在");
+//							continue;
+//						}
+						boolean d = blogInfoDao.ifExist(ob.getString("url").substring(ob.getString("url").lastIndexOf("/")+1));
+						if (d) {
+							continue;
+						}
+						BlogInfo blog = new BlogInfo();
+						blog.setAuthor("code神");
+						blog.setBlogId(ob.getString("url").substring(ob.getString("url").lastIndexOf("/")+1));
+						blog.setUserId("1");
+						blog.setComments("");
+						blog.setCommentsNum(0);
+						blog.setCreateblogDate(CommonUtils.getNowDate());
+						blog.setUpdateDate(CommonUtils.getNowDate());
+						blog.setImageUrl("");
+						blog.setPraiseCount(0);
+						//title.add(ob.getString("title"));
+						System.out.println("CSDN博客标题：" + ob.getString("title"));
+						blog.setTitle(ob.getString("title"));
+						System.out.println("CSDN博客链接：" + ob.getString("url"));
+						String html = Tools.source(ob.getString("url"), "utf-8");
+						//System.err.println(html);
+						Document doc = Jsoup.parse(html);
+						 
+						Elements rows = doc.select("div[class=htmledit_views]");
+						 
+						if (rows.size() >= 1) {
+							System.out.println(3);
+							Element rowss = rows.get(0);
+							 if (rowss.html().isEmpty()||rowss.html().length()<=0) {
+								continue;
+							}
+							 blog.setBlogContent(rowss.html());
+							  
+						} else {
+							// error_text{404页面不处理}
+							 
+							Elements el = doc.select("div[class=error_text]");
+							if (el.size() >= 1) {
+								System.out.println("抱歉404！找不到页面了"); 
+								continue;
+							} else {	 
+								Elements row = doc.select("div[id=content_views]");
+								 
+								if (row.size() >= 1) {
+									 
+									Element rowss = row.get(0);
+									if (rowss.html().isEmpty()||rowss.html().length()<=0) {
+										continue;
+									}
+									blog.setBlogContent(rowss.html());	  
+								}
+							}
+						}
+						blogInfoDao.create(blog);
+						System.out.println("抓取博客入库success！");
+					}
+				}
+				long endtime = System.currentTimeMillis();
+				long resulttime = (endtime - starttime) / 1000;
+				System.err.println("CSDN博客网站数据一轮抓取完成，"
+						+ "等待20秒进行新一轮抓取,爬去数量：" + u
+						+ "耗时为：" + resulttime + "秒");
+				Thread.sleep(20000);
+			}
+		} catch (UnisException e) {
+			LOGGER.error("异常信息", e);
+			System.out.println(e);
+		}catch (Exception e) {
+			LOGGER.error("异常信息", e);
+			System.out.println(e);
+		}
+	}
+	
+	/**
+	 * 评论点赞
+	 */
+	@RequestMapping(value = "/CommentLike", method = RequestMethod.POST)
+	public void addPraiseComment(HttpServletRequest request, Model model, HttpServletResponse response) {
+
+		try {
+			Comment cot = new Comment();
+			
+			String[] params = request.getParameter("op").split(",");
+			Cookie[] dd1 = request.getCookies();
+			PrintWriter out = response.getWriter();
+			cot = commentDao.queryComment(params[0]);
+			if (CookieUtils.ifCookies(request)) {
+				String user = "";
+				for (Cookie cookie : dd1) {
+					if (cookie.getName().equals("userName")) {
+						user = cookie.getValue();
+						continue;
+					}
+				}
+				model.addAttribute("user", user);
+				CommentZan co = commentZanDao.selectCommentData(params[1], params[0]);
+				if (null == co) {
+					CommentZan cz = new CommentZan();
+					cz.setcommentId(params[0]);
+					cz.setCreateDate(CommonUtils.getNowDate());
+					cz.setUpdateDate(CommonUtils.getNowDate());
+					cz.setUserId(params[1]);
+					cz.setStatus(1);
+					commentZanDao.createCommentZan(cz);
+					cot.setUpdateDate(CommonUtils.getNowDate());
+					cot.setZanNum(cot.getZanNum()+1);
+					commentDao.updateComments(cot);
+				} else {
+					co.setUpdateDate(CommonUtils.getNowDate());
+					int status = 0;
+					if (co.getStatus() == 1) {
+						status = 0;
+						cot.setUpdateDate(CommonUtils.getNowDate());
+						cot.setZanNum(cot.getZanNum()-1);
+						commentDao.updateComments(cot);
+						co.setStatus(0);
+					} else {
+						status = 1;
+						cot.setUpdateDate(CommonUtils.getNowDate());
+						cot.setZanNum(cot.getZanNum()+1);
+						commentDao.updateComments(cot);
+						co.setStatus(1);
+					}
+					commentZanDao.updateCommentZan(co);
+					 
+				}
+				 
+				//int num = commentZanDao.queryCommentNum(params[0]);
+				//out.println(num);
+				out.println(1);
+			} else {
+				out.println(-1);
+			}
+			out.flush();
+			out.close();
+
+		} catch (UnisException e) {
+			LOGGER.error("异常信息", e);
+		} catch (Exception e) {
+			LOGGER.error("异常信息", e);
+		}
+	}
 
 	/**
-	 * 点赞
+	 *文章点赞
 	 * 
 	 * @author zhanmeihe
 	 * @param blogid
@@ -1051,7 +1271,6 @@ public class DoMainController implements Runnable {
 			int maxResult = 10;
 
 			List<BlogInfo> bf = blogInfoDao.searchList(s, page - 1, maxResult);
-
 			List<BlogInfo> bif = new ArrayList<>();
 			for (BlogInfo blogInfo : bf) {
 				if (blogInfo.getImageUrl() == null || blogInfo.getImageUrl().equals("")) {
@@ -1359,7 +1578,7 @@ public class DoMainController implements Runnable {
 			HttpServletResponse response, HttpServletRequest request) {
 		try {
 
-			List<BlogInfo> b = blogInfoDao.indexquery(0, 10);
+			//List<BlogInfo> b = blogInfoDao.indexquery(0, 10);
 			Comment ct = new Comment();
 			ct.setBlogId(bolgId);
 			ct.setCommentContent(pinglun);
@@ -1369,7 +1588,8 @@ public class DoMainController implements Runnable {
 			ct.setUserId(userId);
 			ct.setZanNum(0);
 			commentDao.createComments(ct);
-			return new CommonSuccessResponse(b);
+			List<Comment> ctc = commentDao.queryCommentAll(Integer.parseInt("0"), Integer.parseInt("10"),bolgId);
+			return new CommonSuccessResponse(ctc);
 		} catch (UnisException e) {
 			LOGGER.debug("2", e);
 			return new CommonResponse(e.getCode(), e.getMessage());
@@ -1392,8 +1612,8 @@ public class DoMainController implements Runnable {
 		try {
 			String firstResult = request.getParameter("pagenum");
 			String page = request.getParameter("page");
-			List<Comment> ct = commentDao.queryCommentAll(Integer.parseInt(page), Integer.parseInt(firstResult));
-
+			String blogid = request.getParameter("blogId");
+			List<Comment> ct = commentDao.queryCommentAll(Integer.parseInt(page), Integer.parseInt(firstResult),blogid);
 			return new CommonSuccessResponse(ct);
 
 		} catch (UnisException e) {

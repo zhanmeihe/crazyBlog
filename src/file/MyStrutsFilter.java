@@ -10,30 +10,27 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
-public class MyStrutsFilter extends OncePerRequestFilter{                   
-                         
-                        
-                           
+import com.zhan.utils.Const;
+
+public class MyStrutsFilter extends OncePerRequestFilter {
+
 	@Override
-	     protected void doFilterInternal(HttpServletRequest request,
-	              HttpServletResponse response, FilterChain filterChain)
-	             throws ServletException, IOException {
-	   
-		
-		    
-		
-		
-		
-	        // 不过滤的uri
-	          //String[] notFilter = new String[] { "login.html", "index.html" };
-	   
-	         // 请求的uri
-	         String uri = request.getRequestURI();
-	   System.err.println("请求地址："+uri);
-	          // uri中包含background时才进行过滤
-	         if (uri.contains("/ueditor1_4_3/jsp/")) {
-	             // 是否过滤
-	             //boolean doFilter = true;
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+
+		System.err.println("拦截器");
+
+		// 不过滤的uri
+		// String[] notFilter = new String[] { "login.html", "index.html" };
+
+		// 请求的uri
+		String uri = request.getRequestURI();
+		System.err.println("请求地址：" + uri);
+		Const.skip = uri;
+		// uri中包含background时才进行过滤
+		if (uri.contains("/ueditor1_4_3/jsp/")) {
+			// 是否过滤
+			// boolean doFilter = true;
 //	              for (String s : notFilter) {
 //	                 if (uri.indexOf(s) != -1) {
 //	                     // 如果uri中包含不过滤的uri，则不进行过滤
@@ -66,18 +63,13 @@ public class MyStrutsFilter extends OncePerRequestFilter{
 //	                     filterChain.doFilter(request, response);
 //	               ///  }
 //	              } else {
-	                  // 如果不执行过滤，则继续
-	                 filterChain.doFilter(request, response);
-	            // }
-	         } else {
-	            // 如果uri中不包含background，则继续
-	            filterChain.doFilter(request, response);
-	          }
-	     }                                 
-                                                            
-                                               
-                                                      
-                                                                          
-                                                   
-                                                                                                                      
-}  
+			// 如果不执行过滤，则继续
+			filterChain.doFilter(request, response);
+			// }
+		} else {
+			// 如果uri中不包含background，则继续
+			filterChain.doFilter(request, response);
+		}
+	}
+
+}

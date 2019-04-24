@@ -246,7 +246,7 @@ window.onload = function () {
 	
 	 $.ajax({
 	    url : '${pageContext.request.contextPath}/INITDATA',
-	    data : "pagenum=10&page=0",
+	    data : "pagenum=10&page=0&blogId="+'${blogdetail.blogId}',
 	    type : 'GET', 
 	    dataType : 'json', 
 	    async:true, 
@@ -254,11 +254,12 @@ window.onload = function () {
 	    	   $.each(data.object,function(i,n){  
 	    		 //alert(n.blogId);
 	    		 //alert(data.object[0].BlogId);
-	    		 
-	    		 var ss = "<div> <div class='author'><div data-v-f3bf5228='' class='v-tooltip-container' style='z-index: 0;'> <div class='v-tooltip-content'><a href='/u/f79de69d59e3' target='_blank' class='avatar'><img	src='//upload.jianshu.io/users/upload_avatars/4920384/b4f1c76b-52eb-427a-833a-91a1df9f9e56.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114'></a></div></div<div class='info'><a href='/u/f79de69d59e3' target='_blank' class='name'>虬田</a>	<div class='meta'><span>6楼 · 2018.04.17 17:12</span></div></div>	</div><div class='comment-wrap'><p>"+n.commentContent+"</p><div class='tool-group'>	<a data-v-cdecbe24='' id='like-button-22919309' class='like-button'><span data-v-cdecbe24=''>4人赞</span></a> <a	 class=''><i class='iconfont ic-comment'></i> <span>回复</span></a><a class='report'><span>举报</span></a>		</div></div></div>				";
+	    		 //<a	 class=''><i class='iconfont ic-comment'></i> <span>回复</span></a><a class='report'><span>举报</span></a>
+	    		 var ss = "<div> <div class='author'><div data-v-f3bf5228='' class='v-tooltip-container' style='z-index: 0;'> <div class='v-tooltip-content'><a href='${pageContext.request.contextPath}/u/"+n.userId+"_' target='_blank' class='avatar'><img	src='"+n.headUrl+"'></a></div></div<div class='info'><a href='${pageContext.request.contextPath}/u/"+n.userId+"_' target='_blank' class='name'>"+n.nickName+"</a>	<div class='meta'><span>"+n.updateDate+"</span></div></div>	</div><div class='comment-wrap'><p>"+n.commentContent+"</p><div class='tool-group'>	<a href='javascript:void(0);' onclick='verificationComment(&quot;"+ n.commentId + "&quot;)' data-v-cdecbe24='' id='like-button-22919309' class='like-button'><span data-v-cdecbe24=''>"+n.zanNum+"人赞</span></a>   </div></div></div>";
 	    		/**
 					"<p>"+n.blogContent+"</p>"
 	    		**/
+	    		//$("#comment-22919309").html(ss);
                 $("#comment-22919309").append(ss);  
 	    		   $("#content").val("");
             });  
@@ -331,6 +332,57 @@ function verification() {
 		});
 	}
 	
+function verificationComment(data) {
+	//var a = document.getElementById('likenum');
+ 	var blogId = ${blogdetail.blogId};
+ 	var userId = '${user.userId}';
+	//var s = a.innerText; 
+	var d =   data +','+ userId;
+$.post("${pageContext.request.contextPath}/CommentLike", {op : d}, 
+		function(data) {
+	data = parseInt($.trim(data));
+		if(data < 0){
+			alert("继续操作请注册或登录!");
+			$("#errormassage").text("继续操作请注册或登录!").css("color", "red");
+			window.location = "<%=request.getContextPath()%>/sign_login";
+			/* alert("验证成功！"); */
+
+		} else {
+			getdata();
+			//$("#likenum").text(data);
+		}
+
+	});
+}
+
+function getdata() { 
+	$("#comment-22919309").empty();
+	 $.ajax({
+	    url : '${pageContext.request.contextPath}/INITDATA',
+	    data : "pagenum=10&page=0&blogId="+'${blogdetail.blogId}',
+	    type : 'GET', 
+	    dataType : 'json', 
+	    async:true, 
+	    success : function(data,strStatus,xhr) {//这是个回调函数 data表示从action中传过来的json数据
+	    	   $.each(data.object,function(i,n){  
+	    		 //alert(n.blogId);
+	    		 //alert(data.object[0].BlogId);
+	    		 //<a	 class=''><i class='iconfont ic-comment'></i> <span>回复</span></a><a class='report'><span>举报</span></a>
+	    		 var ss = "<div> <div class='author'><div data-v-f3bf5228='' class='v-tooltip-container' style='z-index: 0;'> <div class='v-tooltip-content'><a href='${pageContext.request.contextPath}/u/"+n.userId+"_' target='_blank' class='avatar'><img	src='"+n.headUrl+"'></a></div></div<div class='info'><a href='${pageContext.request.contextPath}/u/"+n.userId+"_' target='_blank' class='name'>"+n.nickName+"</a>	<div class='meta'><span>"+n.updateDate+"</span></div></div>	</div><div class='comment-wrap'><p>"+n.commentContent+"</p><div class='tool-group'>	<a href='javascript:void(0);' onclick='verificationComment(&quot;"+ n.commentId + "&quot;)' data-v-cdecbe24='' id='like-button-22919309' class='like-button'><span data-v-cdecbe24=''>"+n.zanNum+"人赞</span></a>   </div></div></div>";
+	    		/**
+					"<p>"+n.blogContent+"</p>"
+	    		**/
+	    		//$("#comment-22919309").html(ss);
+               $("#comment-22919309").append(ss);  
+	    		   $("#content").val("");
+           });  
+	   <%--  window.location = "<%=request.getContextPath()%>"; --%>
+				}
+	    
+	    });  
+}
+
+	
 function sendPinglun() {
 	
 	var a = document.getElementById('likenum');
@@ -350,6 +402,10 @@ function sendPinglun() {
 		 
 	}
 	else{
+		//清空HTML某个元素的内容
+		//$("#comment-22919309").html(ss);
+		//填充单个不拼接的HTML某个元素内容
+		$("#comment-22919309").empty();
 		$.ajax({
 		    url : '${pageContext.request.contextPath}/writepl',
 		    data : $("#writeCom").serialize(),
@@ -360,13 +416,14 @@ function sendPinglun() {
 		    	   $.each(data.object,function(i,n){  
 		    		 //alert(n.blogId);
 		    		 //alert(data.object[0].BlogId);
-		    		 
-		    		 var ss = "<div> <div class='author'><div data-v-f3bf5228='' class='v-tooltip-container' style='z-index: 0;'> <div class='v-tooltip-content'><a href='/u/f79de69d59e3' target='_blank' class='avatar'><img	src='//upload.jianshu.io/users/upload_avatars/4920384/b4f1c76b-52eb-427a-833a-91a1df9f9e56.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114'></a></div></div<div class='info'><a href='/u/f79de69d59e3' target='_blank' class='name'>虬田</a>	<div class='meta'><span>6楼 · 2018.04.17 17:12</span></div></div>	</div><div class='comment-wrap'><p>"+n.blogContent+"</p><div class='tool-group'>	<a data-v-cdecbe24='' id='like-button-22919309' class='like-button'><span data-v-cdecbe24=''>4人赞</span></a> <a	 class=''><i class='iconfont ic-comment'></i> <span>回复</span></a><a class='report'><span>举报</span></a>		</div></div></div>				";
+		    		 //<a	 class=''><i class='iconfont ic-comment'></i> <span>回复</span></a><a class='report'><span>举报</span></a>
+		    		 var ss = "<div> <div class='author'><div data-v-f3bf5228='' class='v-tooltip-container' style='z-index: 0;'> <div class='v-tooltip-content'><a href='${pageContext.request.contextPath}/u/"+n.userId+"_' target='_blank' class='avatar'><img	src='"+n.headUrl+"'></a></div></div<div class='info'><a href='${pageContext.request.contextPath}/u/"+n.userId+"_' target='_blank' class='name'>"+n.nickName+"</a>	<div class='meta'><span>"+n.updateDate+"</span></div></div>	</div><div class='comment-wrap'><p>"+n.commentContent+"</p><div class='tool-group'>	<a data-v-cdecbe24='' id='like-button-22919309' class='like-button'><span data-v-cdecbe24=''>"+n.zanNum+"人赞</span></a>    </div></div></div>";
 		    		/**
 						"<p>"+n.blogContent+"</p>"
 		    		**/
+		    		
                     $("#comment-22919309").append(ss);  
-		    		   $("#content").val("");
+		    		$("#content").val("");
                 });  
                /*  alert(data.code);
                 alert(data.msg);
@@ -502,6 +559,7 @@ function validateForm() {
 	<!-- 全局顶部导航栏 -->
 	<!-- <span id = "errormassage" style="font-style: "></span> -->
 	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+	 
 		<div class="width-limit">
 			<!-- 左上方 Logo -->
 			<a class="logo" href="<%=request.getContextPath()%>"><img
@@ -716,7 +774,7 @@ function validateForm() {
 						data-author-follow-button></div>
 					<a class="title"
 						href="<%=request.getContextPath()%>/u/${user2.userId }_">${user2.nickName}</a>
-					<p>写了 70597 字，被 7271 人关注，获得了 15164 个喜欢</p>
+					<p>写了 0 字，被 0 人关注，获得了 ${blogdetail.praiseCount } 个喜欢</p>
 
 				</div>
 				<div class="signature">愿你自己成为太阳，驱散万里乌云，照亮来处去处，纵然身边无人守候，也可以拥有温暖自己的力量。</div>
@@ -786,7 +844,7 @@ function validateForm() {
 					<div>
 						<div>
 							<div class="top-title">
-								<span>161条评论</span>  
+								<span>${pinglunnum}条精彩评论</span>  
 								 
 							</div>
 						</div>
@@ -810,474 +868,7 @@ function validateForm() {
 							</div>
 						</div>
 						<div id="comment-22919309" class="comment">
-							<!-- <div>
-								<div class="author">
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/f79de69d59e3" target="_blank" class="avatar"><img
-												src="//upload.jianshu.io/users/upload_avatars/4920384/b4f1c76b-52eb-427a-833a-91a1df9f9e56.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114"></a>
-										</div>
-										
-									</div>
-									<div class="info">
-										<a href="/u/f79de69d59e3" target="_blank" class="name">虬田</a>
-										
-										
-										<div class="meta">
-											<span>6楼 · 2018.04.17 17:12</span>
-										</div>
-									</div>
-								</div>
-								<div class="comment-wrap">
-									<p>体会到你的深深思念</p>
-									<div class="tool-group">
-										<a data-v-cdecbe24="" id="like-button-22919309"
-											class="like-button"><span data-v-cdecbe24="">4人赞</span></a> <a
-											class=""><i class="iconfont ic-comment"></i> <span>回复</span></a>
-										<a class="report"><span>举报</span></a>
-										
-									</div>
-								</div>
-							</div> -->
-							<!-- <div class="sub-comment-list">
-								 
-									 
-											 
-           
-								 
-										 
-										 
-								 
-									 
-					 
-							<div>
-								<div class="author">
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/fcf4fc8a6ba3" target="_blank" class="avatar"><img
-												src="//upload.jianshu.io/users/upload_avatars/8516846/f1dbb01b-b194-4c90-b1f0-7aa094d3f9d1?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114"></a>  </div>
-									</div> <div class="info">
-										<a href="/u/fcf4fc8a6ba3" target="_blank" class="name">升号</a> <div
-											class="meta">
-											<span>12楼 · 2018.04.17 17:25</span>
-										</div>
-									</div>
-								</div> <div class="comment-wrap">
-									<p>棒棒哒</p> <div class="tool-group">
-										<a data-v-cdecbe24="" id="like-button-22919815"
-											class="like-button"><span data-v-cdecbe24="">4人赞</span></a> <a
-											class=""><i class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div>
-							</div> <div class="sub-comment-list">
-								<div id="comment-22919929" class="sub-comment">
-									<p>
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/9617ac822dc6" target="_blank">山青青</a>：
-            </div>
-									</div> <span><a href="/users/fcf4fc8a6ba3"
-										class="maleskine-author" target="_blank"
-										data-user-slug="fcf4fc8a6ba3">@升号</a> 谢谢！</span>
-									</p> <div class="sub-tool-group">
-										<span>2018.04.17 17:29</span> <a class=""><i
-											class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div> <div class="sub-comment more-comment">
-									<a class="add-comment-btn"><i
-										class="iconfont ic-subcomment"></i> <span>添加新评论</span></a>
-								</div>
-							</div>
-						</div>
-						<div id="comment-22922462" class="comment">
-							<div>
-								<div class="author">
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/388da17cc571" target="_blank" class="avatar"><img
-												src="//upload.jianshu.io/users/upload_avatars/8514864/9ffeec25-dbd7-4c79-8ddd-6c33b9820db5?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114"></a>  </div>
-									</div> <div class="info">
-										<a href="/u/388da17cc571" target="_blank" class="name">邢晓华</a> <div
-											class="meta">
-											<span>21楼 · 2018.04.17 18:50</span>
-										</div>
-									</div>
-								</div> <div class="comment-wrap">
-									<p>骨血相连，永远的父亲！🙏 🙏 🙏</p> <div class="tool-group">
-										<a data-v-cdecbe24="" id="like-button-22922462"
-											class="like-button"><span data-v-cdecbe24="">3人赞</span></a> <a
-											class=""><i class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div>
-							</div> <div class="sub-comment-list">
-								<div id="comment-22925312" class="sub-comment">
-									<p>
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/9617ac822dc6" target="_blank">山青青</a>：
-            </div>
-									</div> <span><a href="/users/388da17cc571"
-										class="maleskine-author" target="_blank"
-										data-user-slug="388da17cc571">@邢晓华</a> 谢谢妹妹支持！</span>
-									</p> <div class="sub-tool-group">
-										<span>2018.04.17 20:14</span> <a class=""><i
-											class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div> <div class="sub-comment more-comment">
-									<a class="add-comment-btn"><i
-										class="iconfont ic-subcomment"></i> <span>添加新评论</span></a>
-								</div>
-							</div>
-						</div>
-						<div id="comment-22922594" class="comment">
-							<div>
-								<div class="author">
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/7263bd8e7f19" target="_blank" class="avatar"><img
-												src="//upload.jianshu.io/users/upload_avatars/8518919/ed285f05-156c-4a18-b73e-8dbc4a60bdfa?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114"></a>  </div>
-									</div> <div class="info">
-										<a href="/u/7263bd8e7f19" target="_blank" class="name">海棠银杏枫</a> <div
-											class="meta">
-											<span>23楼 · 2018.04.17 18:54</span>
-										</div>
-									</div>
-								</div> <div class="comment-wrap">
-									<p>写得非常感人。从一直以来掩藏自己，到如今敢于直面内心的痛苦、委屈和失落，这是一种飞跃和成长。其实正像你文中说的，父亲这个名字已经刻在了你的生命里，父女之间的纽带是刻骨铭心的，无论你是否敢于正视它，它都会一直在那里。这就是血浓于水。赞！</p> <div
-										class="tool-group">
-										<a data-v-cdecbe24="" id="like-button-22922594"
-											class="like-button"><span data-v-cdecbe24="">3人赞</span></a> <a
-											class=""><i class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div>
-							</div> <div class="sub-comment-list">
-								<div id="comment-22925272" class="sub-comment">
-									<p>
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/9617ac822dc6" target="_blank">山青青</a>：
-            </div>
-									</div> <span><a href="/users/7263bd8e7f19"
-										class="maleskine-author" target="_blank"
-										data-user-slug="7263bd8e7f19">@海棠银杏枫</a> 谢谢如此细心点评，不愧是知心好友，抱一下！🌺🌺🌺</span>
-									</p> <div class="sub-tool-group">
-										<span>2018.04.17 20:13</span> <a class=""><i
-											class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div> <div class="sub-comment more-comment">
-									<a class="add-comment-btn"><i
-										class="iconfont ic-subcomment"></i> <span>添加新评论</span></a>
-								</div>
-							</div>
-						</div>
-						<div id="comment-22924432" class="comment">
-							<div>
-								<div class="author">
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/352f7983e92c" target="_blank" class="avatar"><img
-												src="//upload.jianshu.io/users/upload_avatars/8515461/aaa3385b-7bce-47bd-a28f-84e9fbd7b7f8?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114"></a>  </div>
-									</div> <div class="info">
-										<a href="/u/352f7983e92c" target="_blank" class="name">美丽芬芳_b8eb</a> <div
-											class="meta">
-											<span>29楼 · 2018.04.17 19:48</span>
-										</div>
-									</div>
-								</div> <div class="comment-wrap">
-									<p>爸爸没能停留在记忆里，却流淌在血液中。I文笔流畅，值得拜读。</p> <div class="tool-group">
-										<a data-v-cdecbe24="" id="like-button-22924432"
-											class="like-button"><span data-v-cdecbe24="">3人赞</span></a> <a
-											class=""><i class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div>
-							</div> <div class="sub-comment-list">
-								<div id="comment-22925127" class="sub-comment">
-									<p>
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/9617ac822dc6" target="_blank">山青青</a>：
-            </div>
-									</div> <span><a href="/users/352f7983e92c"
-										class="maleskine-author" target="_blank"
-										data-user-slug="352f7983e92c">@美丽芬芳_b8eb</a> 谢谢妹妹支持！</span>
-									</p> <div class="sub-tool-group">
-										<span>2018.04.17 20:09</span> <a class=""><i
-											class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div> <div class="sub-comment more-comment">
-									<a class="add-comment-btn"><i
-										class="iconfont ic-subcomment"></i> <span>添加新评论</span></a>
-								</div>
-							</div>
-						</div>
-						<div id="comment-22924650" class="comment">
-							<div>
-								<div class="author">
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/4541ddf92b6d" target="_blank" class="avatar"><img
-												src="//upload.jianshu.io/users/upload_avatars/8516065/6962a419-b443-427d-b544-e4756b509ceb?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114"></a>  </div>
-									</div> <div class="info">
-										<a href="/u/4541ddf92b6d" target="_blank" class="name">方丽_d09a</a> <div
-											class="meta">
-											<span>30楼 · 2018.04.17 19:56</span>
-										</div>
-									</div>
-								</div> <div class="comment-wrap">
-									<p>文章写得非常感人。看完文章，早已成了泪水。爸爸——多么熟悉而又陌生的字眼</p> <div
-										class="tool-group">
-										<a data-v-cdecbe24="" id="like-button-22924650"
-											class="like-button"><span data-v-cdecbe24="">3人赞</span></a> <a
-											class=""><i class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div>
-							</div> <div class="sub-comment-list">
-								<div id="comment-22925121" class="sub-comment">
-									<p>
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/9617ac822dc6" target="_blank">山青青</a>：
-            </div>
-									</div> <span><a href="/users/4541ddf92b6d"
-										class="maleskine-author" target="_blank"
-										data-user-slug="4541ddf92b6d">@方丽_d09a</a> 抱抱妹妹！</span>
-									</p> <div class="sub-tool-group">
-										<span>2018.04.17 20:09</span> <a class=""><i
-											class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div> <div class="sub-comment more-comment">
-									<a class="add-comment-btn"><i
-										class="iconfont ic-subcomment"></i> <span>添加新评论</span></a>
-								</div>
-							</div>
-						</div>
-						<div id="comment-22930068" class="comment">
-							<div>
-								<div class="author">
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/7ce0b9144aad" target="_blank" class="avatar"><img
-												src="//cdn2.jianshu.io/assets/default_avatar/1-04bbeead395d74921af6a4e8214b4f61.jpg"></a>  </div>
-									</div> <div class="info">
-										<a href="/u/7ce0b9144aad" target="_blank" class="name">食之乐</a> <div
-											class="meta">
-											<span>35楼 · 2018.04.17 22:14</span>
-										</div>
-									</div>
-								</div> <div class="comment-wrap">
-									<p>父亲，是个血融于水的话题。细细读你的文章，能够感受浓浓的思父之情！为你的文章喝彩，为你的从小失去父爱而遗憾！</p> <div
-										class="tool-group">
-										<a data-v-cdecbe24="" id="like-button-22930068"
-											class="like-button"><span data-v-cdecbe24="">3人赞</span></a> <a
-											class=""><i class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div>
-							</div> <div class="sub-comment-list">
-								<div id="comment-22935491" class="sub-comment">
-									<p>
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/9617ac822dc6" target="_blank">山青青</a>：
-            </div>
-									</div> <span><a href="/users/7ce0b9144aad"
-										class="maleskine-author" target="_blank"
-										data-user-slug="7ce0b9144aad">@食之乐</a> 谢谢乐乐，早安！</span>
-									</p> <div class="sub-tool-group">
-										<span>2018.04.18 05:09</span> <a class=""><i
-											class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div> <div class="sub-comment more-comment">
-									<a class="add-comment-btn"><i
-										class="iconfont ic-subcomment"></i> <span>添加新评论</span></a>
-								</div>
-							</div>
-						</div>
-						<div id="comment-22935103" class="comment">
-							<div>
-								<div class="author">
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/d56fd284a85f" target="_blank" class="avatar"><img
-												src="//upload.jianshu.io/users/upload_avatars/4021594/ad87f6376c12.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114"></a>  </div>
-									</div> <div class="info">
-										<a href="/u/d56fd284a85f" target="_blank" class="name">直笔公心</a> <div
-											class="meta">
-											<span>40楼 · 2018.04.18 02:30</span>
-										</div>
-									</div>
-								</div> <div class="comment-wrap">
-									<p>🙏</p> <div class="tool-group">
-										<a data-v-cdecbe24="" id="like-button-22935103"
-											class="like-button"><span data-v-cdecbe24="">3人赞</span></a> <a
-											class=""><i class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div>
-							</div> <div class="sub-comment-list">
-								<div id="comment-22935466" class="sub-comment">
-									<p>
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/9617ac822dc6" target="_blank">山青青</a>：
-            </div>
-									</div> <span><a href="/users/d56fd284a85f"
-										class="maleskine-author" target="_blank"
-										data-user-slug="d56fd284a85f">@直笔公心</a> 谢谢友友！</span>
-									</p> <div class="sub-tool-group">
-										<span>2018.04.18 05:06</span> <a class=""><i
-											class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div> <div class="sub-comment more-comment">
-									<a class="add-comment-btn"><i
-										class="iconfont ic-subcomment"></i> <span>添加新评论</span></a>
-								</div>
-							</div>
-						</div>
-						<div id="comment-22918891" class="comment">
-							<div>
-								<div class="author">
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/e6bb5a8bd8d1" target="_blank" class="avatar"><img
-												src="//upload.jianshu.io/users/upload_avatars/4590039/7a835149da87.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114"></a>  </div>
-									</div> <div class="info">
-										<a href="/u/e6bb5a8bd8d1" target="_blank" class="name">paper_文</a> <div
-											class="meta">
-											<span>2楼 · 2018.04.17 17:00</span>
-										</div>
-									</div>
-								</div> <div class="comment-wrap">
-									<p>心里好难过，能够感受那种矛盾的心情。</p> <div class="tool-group">
-										<a data-v-cdecbe24="" id="like-button-22918891"
-											class="like-button"><span data-v-cdecbe24="">2人赞</span></a> <a
-											class=""><i class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div>
-							</div> <div class="sub-comment-list">
-								<div id="comment-22919489" class="sub-comment">
-									<p>
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/9617ac822dc6" target="_blank">山青青</a>：
-            </div>
-									</div> <span><a href="/users/e6bb5a8bd8d1"
-										class="maleskine-author" target="_blank"
-										data-user-slug="e6bb5a8bd8d1">@paper_文</a> 谢谢理解支持！</span>
-									</p> <div class="sub-tool-group">
-										<span>2018.04.17 17:16</span> <a class=""><i
-											class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div> <div class="sub-comment more-comment">
-									<a class="add-comment-btn"><i
-										class="iconfont ic-subcomment"></i> <span>添加新评论</span></a>
-								</div>
-							</div>
-						</div>
-						<div id="comment-22918959" class="comment">
-							<div>
-								<div class="author">
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/a02ad1baf3c7" target="_blank" class="avatar"><img
-												src="//upload.jianshu.io/users/upload_avatars/7085056/cb702208-fd4b-4a07-8401-ae061e6b2b34?imageMogr2/auto-orient/strip|imageView2/1/w/114/h/114"></a>  </div>
-									</div> <div class="info">
-										<a href="/u/a02ad1baf3c7" target="_blank" class="name">聿禾</a> <div
-											class="meta">
-											<span>3楼 · 2018.04.17 17:02</span>
-										</div>
-									</div>
-								</div> <div class="comment-wrap">
-									<p>好文</p> <div class="tool-group">
-										<a data-v-cdecbe24="" id="like-button-22918959"
-											class="like-button"><span data-v-cdecbe24="">2人赞</span></a> <a
-											class=""><i class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
-									</div>
-								</div>
-							</div> <div class="sub-comment-list">
-								<div id="comment-22919463" class="sub-comment">
-									<p>
-									<div data-v-f3bf5228="" class="v-tooltip-container"
-										style="z-index: 0;">
-										<div class="v-tooltip-content">
-											<a href="/u/9617ac822dc6" target="_blank">山青青</a>：
-            </div>
-									</div> <span><a href="/users/a02ad1baf3c7"
-										class="maleskine-author" target="_blank"
-										data-user-slug="a02ad1baf3c7">@聿禾</a> 谢谢支持！</span>
-									</p> <div class="sub-tool-group">
-										<span>2018.04.17 17:15</span> <a class=""><i
-											class="iconfont ic-comment"></i> <span>回复</span></a> <a
-											class="report"><span>举报</span></a>
- 
-						</div> -->
-					</div>
-				</div> <!----> <div>
-					<ul class="pagination">
-						<!---->  <li><a href="javascript:void(null)" class="active">1</a></li> <li><a>2</a></li>
-						<li><a>3</a></li>
-						<li><a>4</a></li> <li><a>下一页</a></li>
-					</ul>
-				</div>
-			</div>
-			
-										<%-- <div class="meta-bottom">
-      <div class="btn like-group"></div>
-      <div class="share-group">
-        <a class="share-circle" data-action="weixin-share" data-toggle="tooltip" data-original-title="分享到微信">
-          <i class="iconfont ic-wechat"></i>
-        </a>
-        <a class="share-circle" data-action="weibo-share" data-toggle="tooltip" href="javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f=&#39;http://v.t.sina.com.cn/share/share.php?appkey=1881139527&#39;,u=z||d.location,p=[&#39;&amp;url=&#39;,e(u),&#39;&amp;title=&#39;,e(t||d.title),&#39;&amp;source=&#39;,e(r),&#39;&amp;sourceUrl=&#39;,e(l),&#39;&amp;content=&#39;,c||&#39;gb2312&#39;,&#39;&amp;pic=&#39;,e(p||&#39;&#39;)].join(&#39;&#39;);function%20a(){if(!window.open([f,p].join(&#39;&#39;),&#39;mb&#39;,[&#39;toolbar=0,status=0,resizable=1,width=440,height=430,left=&#39;,(s.width-440)/2,&#39;,top=&#39;,(s.height-430)/2].join(&#39;&#39;)))u.href=[f,p].join(&#39;&#39;);};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,&#39;&#39;,&#39;&#39;,&#39;http://cwb.assets.jianshu.io/notes/images/24886681/weibo/image_91cdb366e1d3.jpg&#39;, &#39;推荐 林妖妖的盛夏光年 的文章《简书取消首页投稿，码字者何去何从？》（ 分享自 @简书 ）&#39;,&#39;https://www.jianshu.com/p/48b39838a1f1?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=weibo&#39;,&#39;页面编码gb2312|utf-8默认gb2312&#39;));" data-original-title="分享到微博">
-          <i class="iconfont ic-weibo"></i>
-        </a>
-          <a class="share-circle" data-toggle="tooltip" href="http://cwb.assets.jianshu.io/notes/images/24886681/weibo/image_91cdb366e1d3.jpg" target="_blank" data-original-title="下载长微博图片">
-            <i class="iconfont ic-picture"></i>
-          </a>
-        <a class="share-circle more-share" tabindex="0" data-toggle="popover" data-placement="top" data-html="true" data-trigger="focus" href="javascript:void(0);" data-content='
-          <ul class="share-list">
-            <li><a href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=&#39;+e(&#39;https://www.jianshu.com/p/48b39838a1f1?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=qzone&#39;)+&#39;&amp;title=&#39;+e(&#39;推荐 林妖妖的盛夏光年 的文章《简书取消首页投稿，码字者何去何从？》&#39;),x=function(){if(!window.open(r,&#39;qzone&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();"><i class="social-icon-sprite social-icon-zone"></i><span>分享到QQ空间</span></a></li>
-            <li><a href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://twitter.com/share?url=&#39;+e(&#39;https://www.jianshu.com/p/48b39838a1f1?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=twitter&#39;)+&#39;&amp;text=&#39;+e(&#39;推荐 林妖妖的盛夏光年 的文章《简书取消首页投稿，码字者何去何从？》（ 分享自 @jianshucom ）&#39;)+&#39;&amp;related=&#39;+e(&#39;jianshucom&#39;),x=function(){if(!window.open(r,&#39;twitter&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();"><i class="social-icon-sprite social-icon-twitter"></i><span>分享到Twitter</span></a></li>
-            <li><a href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://www.facebook.com/dialog/share?app_id=483126645039390&amp;display=popup&amp;href=https://www.jianshu.com/p/48b39838a1f1?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=facebook&#39;,x=function(){if(!window.open(r,&#39;facebook&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();"><i class="social-icon-sprite social-icon-facebook"></i><span>分享到Facebook</span></a></li>
-            <li><a href="javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://plus.google.com/share?url=&#39;+e(&#39;https://www.jianshu.com/p/48b39838a1f1?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=google_plus&#39;),x=function(){if(!window.open(r,&#39;google_plus&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();"><i class="social-icon-sprite social-icon-google"></i><span>分享到Google+</span></a></li>
-            <li><a href="javascript:void(function(){var d=document,e=encodeURIComponent,s1=window.getSelection,s2=d.getSelection,s3=d.selection,s=s1?s1():s2?s2():s3?s3.createRange().text:&#39;&#39;,r=&#39;http://www.douban.com/recommend/?url=&#39;+e(&#39;https://www.jianshu.com/p/48b39838a1f1?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=douban&#39;)+&#39;&amp;title=&#39;+e(&#39;简书取消首页投稿，码字者何去何从？&#39;)+&#39;&amp;sel=&#39;+e(s)+&#39;&amp;v=1&#39;,x=function(){if(!window.open(r,&#39;douban&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r+&#39;&amp;r=1&#39;};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})()"><i class="social-icon-sprite social-icon-douban"></i><span>分享到豆瓣</span></a></li>
-          </ul>
-        '>更多分享</a>
-      </div>
-    </div> --%>
-			
+							 			
 									<div id="vue_comment"></div>
 		</div>
 

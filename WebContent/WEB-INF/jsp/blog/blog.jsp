@@ -30,8 +30,7 @@
 <body>
 	<%
 		String date = "";
-		SimpleDateFormat formatter = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		date = formatter.format(new Date());
 	%>
 
@@ -89,7 +88,40 @@
 		} */
 	%>
 	<%-- //用户名：<%=user%> --%>
+	<script type="text/javascript">
 	
+	
+	function handleMove (e) {
+		
+	 
+    var dom = $(".contract_list");//可滚动区域
+    var scrollTop = dom.scrollTop();//获取滚动的距离
+
+    this.endClientY = e.touches[0].clientY;//更新手指当前屏幕Y轴位置--结束位置
+    console.log("结束位置:",this.endClientY)
+
+    //判断是否滚动到底部
+    if (scrollTop - this.lastscrolltop > 0) {
+        this.lastscrolltop = dom.scrollTop()
+        console.log("继续滚动，scrollTop:", scrollTop)
+    } else if (scrollTop != 0 && this.lastscrolltop !=0 && scrollTop - this.lastscrolltop == 0) {
+        alert("333");
+    	console.log("到底了!")
+    }
+
+    //判断手指滑动方向
+    if(e.touches[0].clientY < this.startClientY){
+        this.movedirection = "UP";
+    }else if(e.touches[0].clientY > this.startClientY){
+        this.movedirection = "DOWN";
+    }else{
+        this.movedirection = "CENTER";
+    }
+
+    this.startClientY = e.touches[0].clientY;
+
+
+</script>
 	<script type="text/javascript">
 	function validateForm() {
 		var keyword = $.trim($('input[name="s"]').val());
@@ -120,8 +152,8 @@
 	</script>
 
 	<div class="topnav">
-		<a href="http://www.pioneersv.cn/download/div/2017-07-16/785.html"
-			target="_blank">疯狂博客</a>――作品来自<a href="http://www.pioneersv.cn"
+		<a href="http://www.focode.cn/download/div/2017-07-16/785.html"
+			target="_blank">疯狂博客</a>――作品来自<a href="http://www.focode.cn"
 			target="_blank">占美和个人博客网站</a>
 
 	</div>
@@ -140,7 +172,7 @@
 						name="Submit" class="input_submit" value="登录" type="submit"></a>
 				</div>
 				<div class="search f_r" id="login">
-					 
+
 					<a href="<%=request.getContextPath()%>/personal.jsp"><input
 						name="Submit" class="input_submit" value="注册" type="submit"></a>
 				</div>
@@ -154,45 +186,43 @@
 					<%--  <%=user%> --%>
 					<h2 style="font-size: 2em; color: gray;">
 						欢迎用户：<%=user%></h2>
-						 
+
 				</div>
 				<%
 					}
 				%>
 				<div class="search f_r">
-					<form  
-					   action="<%=request.getContextPath()%>/search"  
-						method="get" name="searchform" id="searchform" onsubmit="return validateForm();">
-						<input name="s" placeholder= "搜索🔍" id="keyboard" maxlength="15" class="input_text"
-							value="${key}" style="color: rgb(153, 153, 153);"
-							
-							type="text"> <input name="charset" value="utf-8"
-							type="hidden"> <input name="page" value="1" type="hidden">
-						<input name="date" value="<%=date%>" type="hidden">
-						<input name="type" value="default"
-							type="hidden">
-						 <input
+					<form action="<%=request.getContextPath()%>/search" method="get"
+						name="searchform" id="searchform"
+						onsubmit="return validateForm();">
+						<input name="s" placeholder="搜索🔍" id="keyboard" maxlength="15"
+							class="input_text" value="${key}"
+							style="color: rgb(153, 153, 153);" type="text"> <input
+							name="charset" value="utf-8" type="hidden"> <input
+							name="page" value="1" type="hidden"> <input name="date"
+							value="<%=date%>" type="hidden"> <input name="type"
+							value="default" type="hidden"> <input
 							class="input_submit" value="搜索" type="submit">
 
 					</form>
-<!-- onfocus="if(value=='请输入关键字'){this.style.color='#000';value=''}"
+					<!-- onfocus="if(value=='请输入关键字'){this.style.color='#000';value=''}"
 							onblur="if(value==''){this.style.color='#999';value='请输入关键字'}" -->
 
 				</div>
 				<div class="container">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed"
-						data-toggle="collapse" data-target="#menu" aria-expanded="false">
-						<span class="icon-bar"></span> <span class="icon-bar"></span> <span
-							class="icon-bar"></span>
-					</button>
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed"
+							data-toggle="collapse" data-target="#menu" aria-expanded="false">
+							<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+								class="icon-bar"></span>
+						</button>
+					</div>
 				</div>
-			</div>
 				<div class="blank"></div>
 				<nav>
 					<div class="navigation">
 						<ul class="menu">
-						<%-- <li><a href="<%=request.getContextPath()%>/index.jsp">登录</a></li> --%>
+							<%-- <li><a href="<%=request.getContextPath()%>/index.jsp">登录</a></li> --%>
 							<li><a href="<%=request.getContextPath()%>/index.jsp">网站首页</a></li>
 							<li><a href="#">关于我</a>
 								<ul>
@@ -250,12 +280,12 @@
 							target="_blank" class="readmore">阅读全文&gt;&gt;</a>
 					</ul>
 					<p class="dateview">
-						<span>${blog.createblogDate}</span><span>作者：${blog.author}</span><span>个人博客：[<a
+						<span>${blog.createblogDate}</span><span>作者: ${blog.author}</span><span>个人博客：[<a
 							href="<%=request.getContextPath()%>/u/${blog.userId}_">心得笔记</a>]
 						</span>
 					</p>
 					<br>
-					
+
 				</c:forEach>
 				<p>————————————————————————我也是有底线的哦——————————————————</p>
 			</div>
@@ -364,7 +394,7 @@
 			<div class="footer">
 				<div class="f_l">
 					<p>
-						All Rights Reserved 版权所有：<a href="http://www.pioneersv.cn">占美和个人博客</a>
+						All Rights Reserved 版权所有：<a href="http://www.focode.cn">占美和个人博客</a>
 						备案号：京ICP备17010763号
 					</p>
 				</div>

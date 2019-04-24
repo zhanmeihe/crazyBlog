@@ -24,7 +24,7 @@
 	</resultMap>
 
 	<insert id="create" parameterType="com.service.TestCollect.pojo.BlogInfo">
-		<!-- 自增生成主键策略 -->
+		<!-- 鑷鐢熸垚涓婚敭绛栫暐 -->
 		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
 			PARAMETER_S.nextval from dual </selectKey> -->
 
@@ -119,6 +119,13 @@
 	<select id="querymaxid" resultMap="BaseResultMap" parameterType="String">
 		select max(BLOG_ID) maxBlogId
 		from BLOG where 1=1
+	</select>
+
+
+	<select id="ifExist" parameterType="string" resultType="boolean">
+	
+	<![CDATA[SELECT COUNT(BLOG_ID) FROM BLOG WHERE BLOG_ID = #{blogId}]]>
+	
 	</select>
 
 	<select id="MaxId" resultMap="BaseResultMap" parameterType="String">

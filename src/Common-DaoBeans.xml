@@ -51,6 +51,11 @@
 	<bean id="commentDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
 		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
 		<property name="mapperInterface" value="com.service.TestCollect.dao.CommentDao" />
+	</bean>
+	
+	<bean id="commentZanDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+		<property name="mapperInterface" value="com.service.TestCollect.dao.CommentZanDao" />
 	</bean> 
 	
 	<bean id="collectionTaskDao" class="org.springframework.orm.ibatis3.MapperFactoryBean">

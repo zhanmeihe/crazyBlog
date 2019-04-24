@@ -35,7 +35,7 @@ public class Tools {
 
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e);
 		}
 		return source;
 

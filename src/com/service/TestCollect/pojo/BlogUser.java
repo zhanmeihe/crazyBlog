@@ -2,7 +2,7 @@ package com.service.TestCollect.pojo;
 
 import java.io.Serializable;
 
-public class BlogUser implements Serializable {
+public class BlogUser extends Comment implements Serializable {
 
 	/**
 	 * 

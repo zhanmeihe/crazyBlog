@@ -12,6 +12,11 @@
 		<result column="CREATE_DATE" property="createDate" />
 		<result column="UPDATE_DATE" property="updateDate" />
 	</resultMap>
+	<resultMap  id="CommentResultMap" extends="BaseResultMap" type="com.service.TestCollect.pojo.BlogUser">
+		<result column="IMAGE_URL" property="headUrl" />
+		<result column="USER_NAME" property="userName" />
+		<result column="NICK_NAME" property="nickName" />
+	</resultMap>
 
 	<insert id="createComments" parameterType="com.service.TestCollect.pojo.Comment">
 		<!-- 自增生成主键策略 -->
@@ -42,10 +47,20 @@
 	</insert>
 
 
-	<select id="queryCommentAll" resultMap="BaseResultMap" parameterType="String">
-		select *
-		 from  COMMENT
-		  order by UPDATE_DATE desc
+	<select id="queryCommentAll" resultMap="CommentResultMap" parameterType="String">
+		select COMMENT.COMMENT_ID COMMENT_ID,
+			COMMENT.BLOG_ID BLOG_ID,
+			COMMENT.USER_ID USER_ID,
+			COMMENT.COMMENT_CONTENT COMMENT_CONTENT,
+			COMMENT.ZAN_NUM ZAN_NUM,
+			COMMENT.CREATE_DATE CREATE_DATE,
+			COMMENT.UPDATE_DATE UPDATE_DATE,
+			USER_INFO.IMAGE_URL IMAGE_URL,
+			USER_INFO.USER_NAME USER_NAME,
+			USER_INFO.NICK_NAME NICK_NAME
+			from COMMENT join USER_INFO on COMMENT.USER_ID=USER_INFO.USER_ID
+		   where BLOG_ID=#{blogId}
+		  order by ZAN_NUM desc
 		LIMIT #{ firstResult} , #{
 		maxRowResult} 
 	 
@@ -70,13 +85,14 @@
 
 
 	
-	  <update id="updatePraise" parameterType="com.service.TestCollect.pojo.Praise" >
-    update BLOG_ZANINFO
+	  <update id="updateComments" parameterType="com.service.TestCollect.pojo.Comment" >
+    update COMMENT
     set
-    		STATE_STATUS=#{ Praisestatus, javaType=int, jdbcType=INTEGER},
+    		ZAN_NUM=#{ zanNum, javaType=int, jdbcType=INTEGER},
 			UPDATE_DATE=#{ updateDate, javaType=String, jdbcType=VARCHAR}
+			 
 	where 
-			BLOG_ID=#{blogId}
+			COMMENT_ID=#{commentId}
 	</update>
 
 	<!-- <select id="selectNum" resultMap="BaseResultMap"
@@ -92,9 +108,9 @@
 		from BLOG where BLOG_ID=#{blogId} ORDER BY UPDATE_DATE DESC
 	</select>
  -->
-	<select id="selectNum" resultMap="BaseResultMap" parameterType="String">
-		select COUNT(BLOG_ID) countZan
-		from BLOG_ZANINFO where STATE_STATUS = 1
+	<select id="queryComment" resultMap="BaseResultMap" parameterType="String">
+		select * 
+		from COMMENT where COMMENT_ID=#{commentId}
 	</select>
 
 </mapper>

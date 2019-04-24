@@ -24,5 +24,7 @@ public interface CommentDao {
 	//更新
 	void updateComments(Comment ct);
 	
-	List<Comment> queryCommentAll(@Param("firstResult") int firstResult,@Param("maxRowResult") int maxRowResult);
+	Comment queryComment(@Param("commentId") String commentId);
+	
+	List<Comment> queryCommentAll(@Param("firstResult") int firstResult,@Param("maxRowResult") int maxRowResult,@Param("blogId") String blogId);
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="GBK" ?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.service.TestCollect.dao.CommentZanDao">
+
+	<resultMap id="BaseResultMap" type="com.service.TestCollect.pojo.CommentZan">
+		<result column="COMMENT_ID" property="commentId" />
+		<result column="USER_ID" property="userId" />
+		<result column="STATUS" property="status"/> 
+		<result column="CREATE_DATE" property="createDate" />
+		<result column="UPDATE_DATE" property="updateDate" />
+	</resultMap>
+	 
+	<!-- 添加评论点赞记录 -->
+	<insert id="createCommentZan" parameterType="com.service.TestCollect.pojo.CommentZan">
+		<!-- 自增生成主键策略 -->
+		<!-- <selectKey keyProperty="ID" resultType="int" order="BEFORE"> select 
+			PARAMETER_S.nextval from dual </selectKey> -->
+
+		insert into COMMENT_ZAN
+		(COMMENT_ID,USER_ID,STATUS,CREATE_DATE,UPDATE_DATE)
+		values (
+		#{ commentId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ userId, javaType=String,
+		jdbcType=VARCHAR},
+		#{ status, javaType=int,
+		jdbcType=INTEGER},
+		#{ createDate,
+		javaType=String, jdbcType=VARCHAR},
+		#{
+		updateDate, javaType=String,
+		jdbcType=VARCHAR} 
+		)
+	</insert>
+
+	<!-- 查询某条评论点赞总数 -->
+	<select id="queryCommentNum" resultMap="BaseResultMap" parameterType="String" resultType="int">
+		select IFNULL(count(*),0)
+			from COMMENT_ZAN where COMMENT_ID=#{commentId} and STATUS=1
+		  order by UPDATE_DATE desc
+	 
+	</select>
+	
+	<!-- 查询是否有点赞记录 -->
+	<select id="selectCommentData" resultMap="BaseResultMap" parameterType="String">
+		select *
+			from COMMENT_ZAN where USER_ID=#{userId} and COMMENT_ID=#{commentId}
+	 
+	</select>
+	
+	<!-- 更新点赞状态 -->
+	  <update id="updateCommentZan" parameterType="com.service.TestCollect.pojo.CommentZan" >
+    		update COMMENT_ZAN
+    		set
+    		STATUS=#{status, javaType=int, jdbcType=INTEGER},
+			UPDATE_DATE=#{updateDate, javaType=String, jdbcType=VARCHAR}
+			where 
+			COMMENT_ID=#{commentId} and USER_ID=#{userId}
+	</update>
+	
+</mapper>

@@ -17,5 +17,5 @@ public interface PraiseDao {
 	
 	Praise  queryonetomeny(@Param("blogId") String blogId,@Param("userId") String userId);
 	
-	Praise selectNum(@Param("String blogId") String blogId);
+	Praise selectNum(@Param("blogId") String blogId);
 }

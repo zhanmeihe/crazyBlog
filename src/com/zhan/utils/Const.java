@@ -3,16 +3,17 @@ package com.zhan.utils;
 public class Const {
 	private Const() {
 	}
-	public static final String URL_BLOG_FILE_UPLOAD = "/Users/zhanmeihe/workspace/upload/";
+	//public static final String URL_BLOG_FILE_UPLOAD = "/Users/zhanmeihe/workspace/upload/";
 	//{online}
-	//public static final String URL_BLOG_FILE_UPLOAD = "/home/upload/";
+	public static final String URL_BLOG_FILE_UPLOAD = "/home/upload/";
 	public static final String MP3_FILE_URL = "/app/audio/";
 	public static final String URL_APK_FILE_UPLOAD = "/app/upload/apkfile/";
 	public static final String URL_COMMON_SHOW_FILE = "http://www.51xiubo.com/xiuboServiceIm/common/showFile?fileName=";
-	
+	public static int a = 0;
+	public static int b = 0;
 	//public static final String URL_HEAD_PIC_PATH = "http://localhost/App/common/showIcon?fileName=";
-	 
-	public static final String URL_HEAD_PIC_PATH = "http://www.pioneersv.cn/common/showIcon?fileName=";
+	public static String skip = "";
+	public static final String URL_HEAD_PIC_PATH = "http://www.focode.cn/common/showIcon?fileName=";
 	public static final String USER_LOGIN_TYPE_WEIBO = "1";
 	public static final String USER_LOGIN_TYPE_QQ = "2";
 	public static final String USER_LOGIN_TYPE_WEIXIN = "3";

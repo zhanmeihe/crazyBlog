@@ -89,7 +89,7 @@
   <footer>
     <div class="footer">
       <div class="f_l">
-        <p>All Rights Reserved 版权所有：<a href="http://www.pioneersv.cn">占美和个人博客</a> 备案号：蜀ICP备00000000号</p>
+        <p>All Rights Reserved 版权所有：<a href="http://www.focode.cn">占美和个人博客</a> 备案号：蜀ICP备00000000号</p>
       </div>
       <div class="f_r textr">
         <p>Design by DanceSmile</p>

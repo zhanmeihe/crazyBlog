@@ -265,7 +265,7 @@ function isPhoneNum(){
 						<li><a href="#">设为首页</a></li>
 						<li><a href="#">反馈</a></li>
 						<li><a href="#" target="_blank">帮助</a></li>
-						<li><a href="http://www.pioneersv.cn/personal.jsp" target="_blank" style="font-style: normal;">注册</a></li>
+						<li><a href="http://www.focode.cn/personal.jsp" target="_blank" style="font-style: normal;">注册</a></li>
 					</ul>
 				</div>
 				<div style="padding-top: 25px; padding-left: 25px;">
@@ -316,7 +316,7 @@ function isPhoneNum(){
 			<div class="login_banner"></div>
 			<div class="login_main"></div>
 		</div>
-		<div id="login_footer">Copyright &copy; 2018 www.pioneersv.cn
+		<div id="login_footer">Copyright &copy; 2018 www.focode.cn
 			Inc. All Rights Reserved.</div>
 	</div>
 </body>

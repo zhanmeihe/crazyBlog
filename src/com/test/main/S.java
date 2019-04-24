@@ -9,10 +9,13 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import ch.qos.logback.classic.Logger;
+
 public class S {
-	
+	private static Logger LOGGER ;
 	public static void main(String[] args) throws ClientProtocolException, IOException {
 		S s = new S();
+		LOGGER.info("11");
 		s.getReponse("http://365jia.cn/news/api3/365jia/news/categories/hefei?page=1");
 	}
 

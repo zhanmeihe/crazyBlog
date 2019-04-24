@@ -101,8 +101,8 @@
 	</select>
  -->
 	<select id="selectNum" resultMap="BaseResultMap" parameterType="String">
-		select COUNT(BLOG_ID) countZan
-		from BLOG_ZANINFO where STATE_STATUS = 1
+		select COUNT(*) countZan
+		from BLOG_ZANINFO where STATE_STATUS = 1 and BLOG_ID=#{blogId}
 	</select>
 
 </mapper>

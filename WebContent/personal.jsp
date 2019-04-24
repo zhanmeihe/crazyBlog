@@ -1,4 +1,3 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -210,7 +209,7 @@
 				</div>
 			</div>
 			<div class="login_copyright">
-				All Rights Reserved 版权所有：<a href="http://www.pioneersv.cn">占美和个人博客</a>
+				All Rights Reserved 版权所有：<a href="http://www.focode.cn">占美和个人博客</a>
 				备案号：京ICP备17010763号
 			</div>
 			<a href="https://icp.aizhan.com/" target="_blank"><img

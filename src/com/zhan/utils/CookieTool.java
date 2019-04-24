@@ -17,7 +17,8 @@ public class CookieTool {
     * @param maxAge cookie生命周期  以秒为单位 
     */  
     public static void addCookie(HttpServletResponse response,String name,String value,int maxAge){  
-        Cookie cookie = new Cookie(name,value);  
+        Cookie cookie = new Cookie(name,value); 
+        //cookie.setDomain(".focode.cn");
         cookie.setPath("/");  
         if(maxAge>0){    
             cookie.setMaxAge(maxAge);  

@@ -15,6 +15,8 @@ public interface BlogInfoDao {
 //	List<Video> queryvideoType(@Param("firstResult") int firstResult, @Param("maxResults") int maxResult,
 //			@Param("videotype") String videotype);
 //	
+	boolean ifExist(@Param("blogId")String blogId);
+	
 	List<BlogInfo> indexquery(@Param("firstResult") int firstResult, @Param("maxResults") int maxResult);
 	
 	List<BlogInfo> selectallData(@Param("userId") String userId);
