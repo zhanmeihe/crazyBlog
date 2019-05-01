@@ -8,7 +8,7 @@
 </head>
 <body>
 	<h2 style="color: red;">
-		<a href="<%=request.getContextPath()%>/video/netease.py/0/30">试着回退试试哦~</a>
+		<a href="http://focode.cn">试着回退试试哦~</a>
 	</h2>
 	<h4 style="color: red;">捕获异常为：${errormsg}</h4>
 </body>

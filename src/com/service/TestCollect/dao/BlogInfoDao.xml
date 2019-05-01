@@ -69,26 +69,18 @@
 
 
 	<update id="updateUserInfo" parameterType="com.service.TestCollect.pojo.BlogInfo">
-		update blog
+		update BLOG
 		set
-		USER_NAME=#{ blogContent, javaType=String, jdbcType=VARCHAR},
-
-		SEX=#{
-		sex, javaType=String, jdbcType=VARCHAR},
-		PHONE_NUM=#{ phoneNum,
-		javaType=String, jdbcType=VARCHAR},
-		YEAR_NUM=#{ yearNum,
-		javaType=String, jdbcType=VARCHAR},
+		BLOG_CONTENT=#{ blogContent, javaType=String, jdbcType=VARCHAR}, 
 		UPDATE_DATE=#{ updateDate,
 		javaType=String, jdbcType=VARCHAR}
 		where
-		USER_ID=#{ userId}
+		BLOG_ID=#{ blogId}
 	</update>
 	<select id="indexquery" resultMap="BaseResultMap" parameterType="String">
 		select *
-		from BLOG order by UPDATE_DATE desc
-		LIMIT #{ firstResult} , #{
-		maxResults}
+		from BLOG  order by UPDATE_DATE desc,BLOG_ID desc
+		LIMIT #{ firstResult},10
 	</select>
 
 	<select id="searchList" resultMap="BaseResultMap" parameterType="String">
@@ -105,9 +97,9 @@
 
 	<select id="selectallData" resultMap="BaseResultMap"
 		parameterType="String">
-		select *
-		from BLOG where USER_ID = #{userId} order BY
-		UPDATE_DATE DESC
+		select  *
+		from blog_data.BLOG  where user_id = #{userId} order by update_date desc  limit #{ nextPage},10
+ 
 	</select>
 
 

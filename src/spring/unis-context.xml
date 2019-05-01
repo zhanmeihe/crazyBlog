@@ -40,7 +40,7 @@
 	
 	<!-- dao beans -->
 	<import resource="classpath*:Common-DaoBeans.xml" />
-	<import resource="classpath*:Web-DaoBeans.xml" />
+	<!-- <import resource="classpath*:Web-DaoBeans.xml" /> -->
 	
 	
  <bean id="currentTimeProvider" class="com.app.framework.CurrentTimeProvider" />

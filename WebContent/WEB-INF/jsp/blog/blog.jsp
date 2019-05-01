@@ -10,13 +10,17 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="gb2312">
+<meta charset="utf-8">
 <title>疯狂-博客</title>
 <meta name="keywords" content="疯狂博客" />
 <meta name="description" content="疯狂博客" />
 <link href="<%=request.getContextPath()%>/css/base.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/style2.css">
 <link href="<%=request.getContextPath()%>/css/index.css"
 	rel="stylesheet">
+<script src="<%=request.getContextPath()%>/js/jquery-2.1.4.min.js"></script>
+<script src="<%=request.getContextPath()%>/js/nprogress.js"></script>
+<script src="<%=request.getContextPath()%>/js/jquery.lazyload.min.js"></script>
 <%-- 	<link rel="stylesheet" media="all"
 	href="<%=request.getContextPath()%>/css/web-221ec98db5f8f985b66f.css" /> --%>
 <link href="<%=request.getContextPath()%>/images/logo.ico"
@@ -24,8 +28,8 @@
 <!--[if lt IE 9]  疯狂博客>
 <script src="js/modernizr.js"></script>
 <![endif]-->
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/jquery.js"></script>
+<%-- <script type="text/javascript"
+	src="<%=request.getContextPath()%>/js/jquery.js"></script> --%>
 </head>
 <body>
 	<%
@@ -262,7 +266,11 @@
 		<div class="jztop"></div>
 		<div class="container">
 			<div class="bloglist f_l">
+			 <ul>
+			  
+			 <li class="vov">
 				<c:forEach items="${ bloglist}" var="blog">
+				  <div class="bloglist">
 					<h3>
 						<a href="<%=request.getContextPath()%>/b/${blog.blogId}">${blog.title}</a>
 					</h3>
@@ -285,8 +293,23 @@
 						</span>
 					</p>
 					<br>
-
+ </div>
 				</c:forEach>
+						<div>
+		<nav class="pagination" style="display: none;">
+         <ul>
+          <li class="prev-page"></li>
+          <!-- <li class="active"><span>1</span></li>
+          <li><a href="?page=1">1</a></li> -->
+          <li class="next-page"><a href="<%=request.getContextPath()%>/page/Pagination/${nextpage}">下一页</a></li>
+          <li><span>共 10 页</span></li>
+        </ul> 
+      </nav> 
+		</div>
+				</li>
+				</ul>
+	
+			
 				<p>————————————————————————我也是有底线的哦——————————————————</p>
 			</div>
 			<div class="r_box f_r">
@@ -294,10 +317,22 @@
 					<h3 class="tit">我的导航</h3>
 					<div class="gzwm">
 						<ul>
-
+							
+							 <%
+							 if(!userid.equals("")){
+							 %>
 							<li><a class="email"
 								href="<%=request.getContextPath()%>/u/<%=userid%>_"
 								target="_blank">个人主页</a></li>
+						 <%
+							 }else{
+						 %>
+							<li><a class="email"
+								href="<%=request.getContextPath()%>/sign_login"
+								target="_blank">去登录吧</a></li>
+								<%
+							 }
+								%>
 							<li><a class="qq" href="#mailto:admin@admin.com"
 								target="_blank">我的邮箱</a></li>
 							<li><a class="tel" href="#" target="_blank">我的QQ</a></li>
@@ -394,8 +429,8 @@
 			<div class="footer">
 				<div class="f_l">
 					<p>
-						All Rights Reserved 版权所有：<a href="http://www.focode.cn">占美和个人博客</a>
-						备案号：京ICP备17010763号
+						All Rights Reserved 版权所有：<a href="http://focode.cn">占美和个人博客</a>
+						备案号：京ICP备17010763号-2
 					</p>
 				</div>
 				<div class="f_r textr">
@@ -404,5 +439,8 @@
 			</div>
 		</footer>
 	</div>
+<script src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script> 
+<script src="<%=request.getContextPath()%>/js/jquery.ias.js"></script> 
+<script src="<%=request.getContextPath()%>/js/scripts2.js"></script>
 </body>
 </html>

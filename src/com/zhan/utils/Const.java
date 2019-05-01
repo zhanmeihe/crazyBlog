@@ -5,6 +5,8 @@ public class Const {
 	}
 	//public static final String URL_BLOG_FILE_UPLOAD = "/Users/zhanmeihe/workspace/upload/";
 	//{online}
+	public static final String UPLOADFILE_PATH = "/home/blogfile/uplaod/file/";
+	public static final String ON_UPLOADFILE_PATH = "/home/ftp_test/";
 	public static final String URL_BLOG_FILE_UPLOAD = "/home/upload/";
 	public static final String MP3_FILE_URL = "/app/audio/";
 	public static final String URL_APK_FILE_UPLOAD = "/app/upload/apkfile/";

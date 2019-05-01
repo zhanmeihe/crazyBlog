@@ -48,7 +48,10 @@
 
 <link rel="stylesheet" media="all"
 	href="<%=request.getContextPath()%>/css/web-221ec98db5f8f985b66f.css" />
-
+<%-- <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/style2.css"> --%>
+<script src="<%=request.getContextPath()%>/js/jquery-2.1.4.min.js"></script>
+<script src="<%=request.getContextPath()%>/js/nprogress.js"></script>
+<script src="<%=request.getContextPath()%>/js/jquery.lazyload.min.js"></script>
 <link rel="stylesheet" media="all"
 	href="<%=request.getContextPath()%>/css/entry-8ef1fb97351638811ee4.css" />
 
@@ -76,7 +79,7 @@
 <script language="JavaScript">
 	javascript: window.history.forward(1);
 </script>
-
+ 
 
 <script language="javascript">
 	var secs = 3; //倒计时的秒数 
@@ -367,13 +370,14 @@
 						infinite-scroll-url="<%=request.getContextPath()%>/u">
 
 
-						<li id="note-18527713" data-note-id="18527713" class=""><c:forEach
+						<li id="note-18527713" data-note-id="18527713" class="artlist">
+						<c:forEach
 								items="${ blogdatalist}" var="list">
 								<div class="content">
 									<div class="author">
 										<a class="avatar" target="_blank"
 											href="<%=request.getContextPath()%>/u/${bloguser2.userId}_">
-											<img src="${bloguser2.headUrl}" alt="64" />
+											<img class="thumb" src="${bloguser2.headUrl}" alt="64" />
 										</a>
 										<div class="info">
 											<a class="nickname" target="_blank"
@@ -394,7 +398,18 @@
 										</a> <span><i class="iconfont ic-list-like"></i> 1</span>
 									</div>
 								</div>
-							</c:forEach> <%-- <div class="content">
+							</c:forEach> 
+							<div>
+		<nav class="pagination" style="display: none;">
+         <ul>
+          <li class="prev-page"></li>
+          <!-- <li class="active"><span>1</span></li>
+          <li><a href="?page=1">1</a></li> -->
+          <li class="next-page"><a href="<%=request.getContextPath()%>/blog/page/${nextPage}/${userId}_">下一页</a></li>
+          <li><span>共 10 页</span></li>
+        </ul> 
+      </nav> 
+		</div>					<%-- <div class="content">
 								<div class="author">
 									<a class="avatar" target="_blank" href="<%=request.getContextPath()%>/u/"> <img
 										src="//upload.jianshu.io/users/upload_avatars/2043581/776f30d3-02e5-4595-be5a-14249af2322c.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/64/h/64"
@@ -455,6 +470,7 @@ hello  it!fffffsfsvdsfsfsf</textarea>
 </div> -->
 
 		</div>
+		 
 	</div>
 	<!-- <div data-vcomp="side-tool"></div> -->
 
@@ -486,6 +502,8 @@ hello  it!fffffsfsvdsfsfsf</textarea>
 			s.parentNode.insertBefore(bp, s);
 		})();
 	</script> -->
-
+<script src="<%=request.getContextPath()%>/js/bootstrap.min.js"></script> 
+<script src="<%=request.getContextPath()%>/js/jquery.ias.js"></script> 
+<script src="<%=request.getContextPath()%>/js/scripts.js"></script>
 </body>
 </html>

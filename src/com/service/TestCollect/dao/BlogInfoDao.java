@@ -19,7 +19,7 @@ public interface BlogInfoDao {
 	
 	List<BlogInfo> indexquery(@Param("firstResult") int firstResult, @Param("maxResults") int maxResult);
 	
-	List<BlogInfo> selectallData(@Param("userId") String userId);
+	List<BlogInfo> selectallData(@Param("userId") String userId,@Param("nextPage") int nextPage);
 	
 	List<BlogInfo> searchList(@Param("queryString") String queryString,@Param("firstResult") int firstResult, @Param("maxResults") int maxResult);
 	
