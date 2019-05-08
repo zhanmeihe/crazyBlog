@@ -907,10 +907,10 @@ public class DoMainController implements Runnable {
 			List<BlogInfo> lis = new ArrayList<>();
 			BlogUser bu = new BlogUser();
 			Cookie[] dd1 = request.getCookies();
-			if (dd1 == null) {
-				model.addAttribute("user", "");
-				return new ModelAndView("blog/editWord");
-			}
+//			if (dd1 == null) {
+//				model.addAttribute("user", "");
+//				return new ModelAndView("blog/editWord");
+//			}
 			if (dd1.length >= 3) {
 
 				for (Cookie cookie : dd1) {
@@ -927,14 +927,14 @@ public class DoMainController implements Runnable {
 				}
 			} else {
 				model.addAttribute("errorMsg", "请重新登录");
-				return new ModelAndView("blog/login");
+				return new ModelAndView("blog/loginNew");
 			}
 			if (error != null && !error.equals("")) {
 				model.addAttribute("error", request.getParameter("errorMsg"));
 			} else {
 				model.addAttribute("errorMsg", "请重新登录");
 			}
-			return new ModelAndView("blog/login");
+			return new ModelAndView("blog/loginNew");
 		} catch (UnisException e) {
 			LOGGER.info("异常", e);
 			model.addAttribute("errorMsg", "请重新登录");

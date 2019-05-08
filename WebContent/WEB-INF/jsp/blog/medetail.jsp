@@ -32,11 +32,11 @@
 	content="cV4-qkUJZR6gmFeajx_UyPe47GW9vY6cnCrYtCHYNh4" />
 <meta name="google-site-verification"
 	content="HF7lfF8YEGs1qtCE-kPml8Z469e2RHhGajy6JPVy5XI" />
-<meta http-equiv="mobile-agent"
-	content="format=html5; url=https://www.jianshu.com/u/1b4935172ae0">
+<!-- <meta http-equiv="mobile-agent"
+	content="format=html5; url=https://www.focode.cn/u/1b4935172ae0"> -->
 
 
-<meta name="apple-mobile-web-app-title" content="简书">
+<meta name="apple-mobile-web-app-title" content="疯狂博客">
 
 
 

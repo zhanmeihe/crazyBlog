@@ -25,11 +25,11 @@
     <![endif]-->
 <script>
     
-	function randCode(o) {
-		var url = $(o).attr('src');
-		//alert(url);
-		$(o).attr('src', url + '?t=' + new Date());
-	}
+function randCode(o) {
+	var url = $(o).attr('src');
+	//alert(url);
+	$(o).attr('src', url + '?t=' + new Date());
+}
         var _hmt = _hmt || [];
         (function() {
             var hm = document.createElement("script");
