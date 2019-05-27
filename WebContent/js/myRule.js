@@ -28,10 +28,10 @@ var profiles = [];
 var biggerTime = new Date(2018, 1, 5).getTime();
 var interTime = 0.25 * 24 * 60 * 60 * 1000;
 var lessTime = Date.now() - interTime;
-lessTime = new Date(2018, 12, 30).getTime();
+lessTime = new Date(2019, 4, 24).getTime();
 
 // 历史页抓取时间规则
-var afterTime = new Date(2017, 5, 25).getTime();
+var afterTime = new Date(2019, 5, 30).getTime();
 
 // 文章跳转时间
 var basicTimeSeconds = 1;
@@ -198,9 +198,9 @@ function getProfile(req,res,serverResData,callback){
 		var msgBiz = linkParse.__biz;
 		
 		var nickName = /<strong class="profile_nickname">(.+?)<\/strong>/.exec(content);
-		console.log('红米'+nickName);
+		 
 		//var metaValuePattern = /<p class="profile_desc">(.+?)<\/p>/.exec(content)[1].replace(/[\ud000-\udfff]/g, '');
-		//console.log('红米'+metaValuePattern);
+		 
 		connection.query('select id from history where biz = ?', [msgBiz], function(error, results, fields){
 			if (error) throw error;
 			if (results.length == 0) {
@@ -229,6 +229,7 @@ function getProfile(req,res,serverResData,callback){
 			console.log('\n下一条即将跳至公众号：' + nextProfile);
 			console.log('剩余公众号数量：' + profiles.length + '\n');
 			let delayTime = Math.floor(Math.random()*randomTimeSecondsPro+basicTimeSecondsPro);
+			console.log('******___________'+delayTime);
 			// 只抓取30天内的历史文章消息后，隔10s跳转至下一条公众号
 			var scrollDownJs = '<script type="text/javascript">var end = document.createElement("p");document.body.appendChild(end);(function scrollDown(){var xhr = new XMLHttpRequest;xhr.open("get", "/startAnother?biz=' + msgBiz + '", false);xhr.send(null);if (xhr.responseText == "true") {document.body.scrollIntoView();var meta = document.createElement("meta");meta.httpEquiv = "refresh";meta.content = "' + delayTime + ';url=' + nextProLink + '";document.head.appendChild(meta);} else {end.scrollIntoView();setTimeout(scrollDown,Math.floor(Math.random()*1000+1000));}})();</script>';
 			// 将此公众号下拉至最早的一篇历史消息文章后，再隔10s跳转至下一公众号（与上面一行代码两者取其一执行）
@@ -291,6 +292,7 @@ function parseArticles(o, dateTime){
 // 插入数据库时判断此数据是否已经存在
 function whetherInsertData(iD){
 	// 历史页抓取时间规则
+	console.log('^^^^'+iD.publish_time +'^^^^^'+afterTime);
 	if (iD.publish_time < afterTime) {
 		 
 		isScrollDown[iD.msg_biz] = true;

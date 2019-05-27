@@ -78,7 +78,7 @@ class ProxyCore extends events.EventEmitter {
     if (parseInt(process.versions.node.split('.')[0], 10) < 4) {
       throw new Error('node.js >= v4.x is required for anyproxy');
     } else if (config.forceProxyHttps && !certMgr.ifRootCAFileExists()) {
-      logUtil.printLog('You can run `anyproxy-ca` to generate one root CA and then re-run this command');
+      logUtil.printLog('You can run anyproxy-ca to generate one root CA and then re-run this command');
       throw new Error('root CA not found. Please run `anyproxy-ca` to generate one first.');
     } else if (this.proxyType === T_TYPE_HTTPS && !config.hostname) {
       throw new Error('hostname is required in https proxy');
@@ -136,7 +136,7 @@ class ProxyCore extends events.EventEmitter {
   handleExistConnections(socket) {
     const self = this;
     self.socketIndex ++;
-    const key = `socketIndex_${self.socketIndex}`;
+    const key = 'socketIndex_${self.socketIndex}';
     self.socketPool[key] = socket;
 
     // if the socket is closed already, removed it from pool
@@ -363,9 +363,9 @@ class ProxyServer extends ProxyCore {
         tmpWebServer.close((error) => {
           if (error) {
             console.error(error);
-            logUtil.printLog(`proxy web server close FAILED: ${error.message}`, logUtil.T_ERR);
+            logUtil.printLog('proxy web server close FAILED: ${error.message}', logUtil.T_ERR);
           } else {
-            logUtil.printLog(`proxy web server closed at ${this.proxyHostName} : ${this.webPort}`);
+            logUtil.printLog('proxy web server closed at ${this.proxyHostName} : ${this.webPort}');
           }
 
           resolve(error);

@@ -8,10 +8,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.zip.GZIPInputStream;
+
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 import cn.nusof.common.io.util.IOUtils;
 
@@ -190,7 +195,7 @@ public class Tools {
 	}
 
 	public static void main(String[] args) throws IOException {
-		System.err.println(source("https://blog.csdn.net/wangpeng047/article/details/12101913", "utf-8"));
+		System.err.println(httpURL("https://blog.csdn.net/orichisonic/article/details/51247853#"));
 //		public String getPageSource()
 //		  {
 //		    StringBuffer sb = new StringBuffer();
@@ -287,4 +292,67 @@ public class Tools {
 
 		return source;
 	}
+	
+	public static String httpURL(String url){
+        String result = "";
+        try{
+            CloseableHttpClient httpclient = HttpClients.createDefault();
+            HttpGet httpget = new HttpGet(url);
+            CloseableHttpResponse response = httpclient.execute(httpget);
+            try{
+                if (response != null && response.getStatusLine().getStatusCode()
+                        == HttpStatus.SC_OK ){
+                    System.out.println(response.getStatusLine().getStatusCode());
+                    HttpEntity entity = response.getEntity();
+                    System.out.println(entity.getContentEncoding());
+                    result = readResponse(entity, "utf-8");
+                }
+            }
+            finally{
+                httpclient.close();
+                response.close();
+            }
+
+        }
+        catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static String readResponse(HttpEntity entity, String charset){
+        StringBuffer res = new StringBuffer();
+        BufferedReader reader = null;
+        try{
+            if (entity == null){
+                return null;
+            }
+            else{
+                reader = new BufferedReader(new InputStreamReader(entity.getContent(),charset));
+                String line;
+                while ( (line = reader.readLine()) != null){
+                    line = line + "\n";
+                    res.append(line);
+                }
+            }
+        }
+        catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        finally{
+            try{
+                if (reader != null){
+                    reader.close();
+                }
+
+            }
+            catch(Exception e){
+                e.toString();
+            }
+        }
+        return res.toString();
+    }
+
 }

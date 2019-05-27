@@ -1,16 +1,29 @@
 package com.service.TestCollect.service;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.CharArrayBuffer;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -31,10 +44,7 @@ import net.sf.json.JSONObject;
  *
  */
 
-
 public class CSDNSpider {
-	
-	 
 
 	public List<String> getlist() {
 		List<String> csdnurl = new ArrayList<>();
@@ -67,10 +77,43 @@ public class CSDNSpider {
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		//CSDNSpider.SpiderC();
-String d = "https://blog.csdn.net/u010634066/article/details/80873175";
-System.err.println(d.substring(d.lastIndexOf("/")+1));
+		String url = "http://api.tv.cnrmobile.com/mobileapi/getlivelist";
+		Map<String, String> map = new HashMap<>();
+		map.put("startPage", "0");
+		map.put("pageNumber", "17");
+		// map.put("imsi", "460000980266678");
+		// map.put("nodeType", "0");
+		// map.put("version", "2.7.3");
+		map.put("userId", "1629856");
+		// map.put("platform", "0");
+		// map.put("sid", "1");
+		// map.put("token", "");
+		// map.put("isCity", "0");
+		// map.put("imei", "865422030943807");
+		map.put("channelName", "卫视");
+		map.put("sn", "9002945C13ECECAA7A97709B4038488C");
+		// map.put("userType", "0");
+		// map.put("netWork", "wifi网络");
+		map.put("nodeId", "261");
+		map.put("channelId", "CNRL010024");
+		JSONObject jsonResult = JSONObject.fromObject(postMap(url, map));
 		
+		url = "http://api.tv.cnrmobile.com/program/playinfo";
+		JSONArray lists = JSONArray.fromObject(jsonResult.getString("demandProgramList"));
+		for (int i = 0; i < lists.size(); i++) {
+			map.clear();
+			jsonResult = JSONObject.fromObject(lists.get(i));
+			System.out.println(jsonResult.getString("playId"));
+			map.put("ht_type", "false");
+			map.put("userId", "1629856");
+			map.put("sn", "9002945C13ECECAA7A97709B4038488C");
+			map.put("channelId", "CNRL010024");
+			map.put("playId", jsonResult.getString("playId"));
+			jsonResult  = JSONObject.fromObject(postMap(url, map));
+			JSONArray list = JSONArray.fromObject(jsonResult.getString("playSources"));
+			jsonResult = JSONObject.fromObject(list.get(0));
+			System.out.println(jsonResult.getString("sourceUrl"));
+		}
 	}
 
 	public void SpiderC() throws InterruptedException {
@@ -91,8 +134,8 @@ System.err.println(d.substring(d.lastIndexOf("/")+1));
 					JSONObject ob = JSONObject.fromObject(list.get(i));
 					// content_views
 					// htmledit_views
-					
-					//临时排重
+
+					// 临时排重
 					if (title.contains(ob.getString("title"))) {
 						System.out.println("已经存在");
 						continue;
@@ -108,9 +151,9 @@ System.err.println(d.substring(d.lastIndexOf("/")+1));
 //					blog.setUpdateDate(CommonUtils.getNowDate());
 //					blog.setImageUrl("");
 //					blog.setPraiseCount(0);
-					//title.add(ob.getString("title"));
+					// title.add(ob.getString("title"));
 					System.out.println("CSDN博客标题：" + ob.getString("title"));
-					//blog.setTitle(ob.getString("title"));
+					// blog.setTitle(ob.getString("title"));
 					System.out.println("CSDN博客链接：" + ob.getString("url"));
 					String html = Tools.source(ob.getString("url"), "utf-8");
 					// System.out.println("页面信息："+html);
@@ -118,8 +161,8 @@ System.err.println(d.substring(d.lastIndexOf("/")+1));
 					Elements rows = doc.select("div[class=htmledit_views]");
 					if (rows.size() >= 1) {
 						Element rowss = rows.get(0);
-						 System.out.println("htmledit_views：" + rowss.html());
-						 //blog.setBlogContent(rowss.html());
+						System.out.println("htmledit_views：" + rowss.html());
+						// blog.setBlogContent(rowss.html());
 					} else {
 						// error_text{404页面不处理}
 						Elements el = doc.select("div[class=error_text]");
@@ -129,13 +172,13 @@ System.err.println(d.substring(d.lastIndexOf("/")+1));
 							Elements row = doc.select("div[id=content_views]");
 							if (row.size() >= 1) {
 								Element rowss = row.get(0);
-								 System.err.println("content_views：" + rowss.html());
-								 //blog.setBlogContent(rowss.html());
+								System.err.println("content_views：" + rowss.html());
+								// blog.setBlogContent(rowss.html());
 							}
 
 						}
 					}
-					//blogInfoDao.create(blog);
+					// blogInfoDao.create(blog);
 				}
 			}
 			long endtime = System.currentTimeMillis();
@@ -188,6 +231,66 @@ System.err.println(d.substring(d.lastIndexOf("/")+1));
 			System.err.println("post请求提交失败:" + url + e);
 		}
 		return jsonResult;
+	}
+
+	/**
+	 * httppost请求
+	 */
+	public static String postMap(String url, Map<String, String> map) {
+		String result = null;
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		HttpPost post = new HttpPost(url);
+		List<NameValuePair> pairs = new ArrayList<NameValuePair>();
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			pairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+		}
+		CloseableHttpResponse response = null;
+		try {
+			post.setEntity(new UrlEncodedFormEntity(pairs, "UTF-8"));
+			response = httpClient.execute(post);
+			if (response != null && response.getStatusLine().getStatusCode() == 200) {
+				HttpEntity entity = response.getEntity();
+				result = entityToString(entity);
+			}
+			return result;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				httpClient.close();
+				if (response != null) {
+					response.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+		return null;
+	}
+
+	private static String entityToString(HttpEntity entity) throws IOException {
+		String result = null;
+		if (entity != null) {
+			long lenth = entity.getContentLength();
+			if (lenth != -1 && lenth < 2048) {
+				result = EntityUtils.toString(entity, "UTF-8");
+			} else {
+				InputStreamReader reader1 = new InputStreamReader(entity.getContent(), "UTF-8");
+				CharArrayBuffer buffer = new CharArrayBuffer(2048);
+				char[] tmp = new char[1024];
+				int l;
+				while ((l = reader1.read(tmp)) != -1) {
+					buffer.append(tmp, 0, l);
+				}
+				result = buffer.toString();
+			}
+		}
+		return result;
 	}
 
 	public static JSONObject httpGet(String url) {
