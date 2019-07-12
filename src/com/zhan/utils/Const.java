@@ -11,6 +11,8 @@ public class Const {
 	public static final String MP3_FILE_URL = "/app/audio/";
 	public static final String URL_APK_FILE_UPLOAD = "/app/upload/apkfile/";
 	public static final String URL_COMMON_SHOW_FILE = "http://www.51xiubo.com/xiuboServiceIm/common/showFile?fileName=";
+	
+	public static String CODE = "NULL";
 	public static int a = 0;
 	public static int b = 0;
 	//public static final String URL_HEAD_PIC_PATH = "http://localhost/App/common/showIcon?fileName=";

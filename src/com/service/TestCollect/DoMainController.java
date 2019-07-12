@@ -109,6 +109,7 @@ import com.zhan.utils.PerimageUtils;
 import com.zhan.utils.Post;
 import com.zhan.utils.PropertiesFactory;
 import com.zhan.utils.RegexConst;
+import com.zhan.utils.SignUtil;
 import com.zhan.utils.TmpList;
 import com.zhan.utils.TmpListMapper;
 import com.zhan.utils.Tools;
@@ -176,6 +177,26 @@ public class DoMainController implements Runnable {
 		} catch (Exception e) {
 			LOGGER.error("异常", e);
 		}
+	}
+
+	@RequestMapping(value = "/weixinChek", method = RequestMethod.GET)
+	public void weixinChek(@RequestParam("signature") String signature, @RequestParam("timestamp") String timestamp,
+			@RequestParam("nonce") String nonce, @RequestParam("echostr") String echostr, HttpServletResponse response)
+			throws IOException {
+		PrintWriter out = response.getWriter();
+		if (SignUtil.checkSignature(signature, timestamp, nonce)) {
+			System.out.println("=======请求校验成功======" + echostr);
+			out.print(echostr);
+		}
+		out.close();
+		out = null;
+	}
+
+	@RequestMapping(value = "/getcode", method = RequestMethod.GET, produces = "application/json")
+	public void queryCode(HttpServletResponse response) throws IOException {
+		PrintWriter out = response.getWriter();
+		out.print(Const.CODE);
+		out.close();
 	}
 
 	@RequestMapping(value = "/getWxHis", method = RequestMethod.GET)
@@ -747,8 +768,10 @@ public class DoMainController implements Runnable {
 			session.setAttribute("imagePath", "/home/testproject");
 			String value = (String) session.getAttribute("imagePath");
 			System.out.println("获取session值是：" + value);
+			System.err.println("code:" + request.getParameter("code"));
+			Const.CODE = request.getParameter("code");
 			int start = 0;
-			 
+
 			List<BlogInfo> bi = blogInfoDao.indexquery(start, 10);
 			List<BlogInfo> bif = new ArrayList<>();
 			for (BlogInfo blogInfo : bi) {
@@ -791,20 +814,21 @@ public class DoMainController implements Runnable {
 		}
 		return null;
 	}
-	
+
 	@RequestMapping(value = "/page/Pagination/{nextpage}", method = RequestMethod.GET, produces = "application/json")
-	public String Page(@PathVariable("nextpage") int nextpage,HttpServletRequest request, HttpServletResponse response, Model model) {
+	public String Page(@PathVariable("nextpage") int nextpage, HttpServletRequest request, HttpServletResponse response,
+			Model model) {
 		try {
 			HttpSession session = request.getSession();
 			session.setAttribute("imagePath", "/home/testproject");
 			String value = (String) session.getAttribute("imagePath");
 			System.out.println("获取session值是：" + value);
-			 nextpage = nextpage+1; 
-			List<BlogInfo> bi = blogInfoDao.indexquery(nextpage*10, 10);
+			nextpage = nextpage + 1;
+			List<BlogInfo> bi = blogInfoDao.indexquery(nextpage * 10, 10);
 			List<BlogInfo> bif = new ArrayList<>();
 			for (BlogInfo blogInfo : bi) {
-				//String v = "/home/blogfile/uplaod/file/2019042815/";
-				//blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
+				// String v = "/home/blogfile/uplaod/file/2019042815/";
+				// blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
 				blogInfo.setBlogContent(FileReaderUtils.readFile(blogInfo.getBlogContent()));
 				if (blogInfo.getImageUrl() == null || blogInfo.getImageUrl().equals("")) {
 					blogInfo.setImageUrl(PerimageUtils.getImgStr(blogInfo.getBlogContent()));
@@ -851,7 +875,7 @@ public class DoMainController implements Runnable {
 	public String blogdetail(@PathVariable("blogId") String blogId, HttpServletRequest request,
 			HttpServletResponse response, Model model) {
 		try {
-
+			System.err.println("获取code值-----" + Const.CODE);
 			BlogInfo bo = blogInfoDao.queryId(blogId);
 			if (bo == null) {
 				// 返回错误页面
@@ -918,7 +942,7 @@ public class DoMainController implements Runnable {
 						bu = blogUserDao.queryUserName(MD5Utils.getFromBASE64(cookie.getValue()));
 					}
 					if (cookie.getName().equals("userid") && !cookie.getValue().equals("")) {
-						lis = blogInfoDao.selectallData(MD5Utils.getFromBASE64(cookie.getValue()),0);
+						lis = blogInfoDao.selectallData(MD5Utils.getFromBASE64(cookie.getValue()), 0);
 					}
 				}
 				if (lis.size() > 1 && bu.getUserId() != null) {
@@ -984,7 +1008,7 @@ public class DoMainController implements Runnable {
 
 			// List<BlogUser> user =
 			// blogUserDao.queryUserBlogData(users.getUserId());
-			List<BlogInfo> bf = blogInfoDao.selectallData(users.getUserId(),0);
+			List<BlogInfo> bf = blogInfoDao.selectallData(users.getUserId(), 0);
 			// 字数count
 			int num = 0;
 
@@ -993,7 +1017,7 @@ public class DoMainController implements Runnable {
 			// num++;
 			Map<Integer, Integer> map = new HashMap<>();
 			for (int i = 0; i < bf.size(); i++) {
-				 bf.get(i).setBlogContent(FileReaderUtils.readFile(bf.get(i).getBlogContent()));
+				bf.get(i).setBlogContent(FileReaderUtils.readFile(bf.get(i).getBlogContent()));
 				num += new ChinesepreNum().chineseCount(bf.get(i).getBlogContent());
 			}
 			UserUtil.setUser(users);
@@ -1010,7 +1034,7 @@ public class DoMainController implements Runnable {
 			for (BlogInfo blogInfo : bf) {
 				blogInfo.setBlogContent(FileReaderUtils.readFile(blogInfo.getBlogContent()));
 				if (blogInfo.getBlogContent().length() >= 150) {
-					
+
 					String content = PeanUtils.delHTMLTag(blogInfo.getBlogContent().substring(0, 150));
 					blogInfo.setBlogContent(content);
 					blist.add(blogInfo);
@@ -1024,7 +1048,7 @@ public class DoMainController implements Runnable {
 			if (url != null && !url.equals("")) {
 				return new ModelAndView("redirect:" + url.substring(11));
 			}
-			
+
 			attributes.addFlashAttribute("blogdatalist", blist);
 			attributes.addFlashAttribute("textnum", num);
 			attributes.addFlashAttribute("bloguser", users);
@@ -1162,7 +1186,7 @@ public class DoMainController implements Runnable {
 								}
 							}
 						}
-						
+
 						blog.setBlogContent(new UtilsController().updateBlogData(blog));
 						blogInfoDao.create(blog);
 						System.out.println("抓取博客入库success！");
@@ -1332,22 +1356,23 @@ public class DoMainController implements Runnable {
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public ModelAndView searchKeyword(HttpServletRequest request, Model model,
 			@RequestParam(value = "s", required = true) String s,
-			@RequestParam(value = "page", required = false) int page,RedirectAttributes attributes, HttpServletResponse response) {
+			@RequestParam(value = "page", required = false) int page, RedirectAttributes attributes,
+			HttpServletResponse response) {
 		try {
 			int maxResult = 10;
-			System.err.println("搜索关键字："+s);
+			System.err.println("搜索关键字：" + s);
 			List<BlogInfo> bf = blogInfoDao.searchList(s, 0, maxResult);
 			List<BlogInfo> bif = new ArrayList<>();
-			if (bf.size()==0) {
-				attributes.addAttribute("tip","没有结果");
+			if (bf.size() == 0) {
+				attributes.addAttribute("tip", "没有结果");
 				model.addAttribute("nextpage", 0);
 				model.addAttribute("key", s);
 				model.addAttribute("bloglist", bif);
 				return new ModelAndView("blog/blog");
 			}
 			for (BlogInfo blogInfo : bf) {
-				//String v = "/home/blogfile/uplaod/file/2019050110/";
-				//blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
+				// String v = "/home/blogfile/uplaod/file/2019050110/";
+				// blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
 				blogInfo.setBlogContent(FileReaderUtils.readFile(blogInfo.getBlogContent()));
 				if (blogInfo.getImageUrl() == null || blogInfo.getImageUrl().equals("")) {
 					blogInfo.setImageUrl(PerimageUtils.getImgStr(blogInfo.getBlogContent()));
@@ -1356,7 +1381,7 @@ public class DoMainController implements Runnable {
 				if (blogInfo.getBlogContent().length() > 150) {
 					new PeanUtils();
 					String subcontent = PeanUtils.delHTMLTag(blogInfo.getBlogContent());
-					if (!subcontent.equals("")&&subcontent.length()>=150) {
+					if (!subcontent.equals("") && subcontent.length() >= 150) {
 						subcontent = subcontent.substring(0, 150);
 						blogInfo.setBlogContent(subcontent + "...");
 					} else {
@@ -1492,7 +1517,7 @@ public class DoMainController implements Runnable {
 						if (dd1[i].getName().equals("userid") && !dd1[i].getValue().equals("")) {
 							// 解密后的userId
 							String userId = MD5Utils.getFromBASE64(dd1[i].getValue());
-							lis = blogInfoDao.selectallData(userId,0);
+							lis = blogInfoDao.selectallData(userId, 0);
 						}
 					}
 					// if (lis.size()<1&&bu.getUserId()==null) {
@@ -1507,11 +1532,11 @@ public class DoMainController implements Runnable {
 					if (bu1.getNickName() == null || bu1.getNickName().equals("")) {
 						return new ModelAndView("blog/errorpage");
 					}
-					lis = blogInfoDao.selectallData(userIds,0);
+					lis = blogInfoDao.selectallData(userIds, 0);
 					List<BlogInfo> blist = new ArrayList<>();
 					for (BlogInfo blogInfo : lis) {
-						//String v = "/home/blogfile/uplaod/file/2019042815/";
-						//blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
+						// String v = "/home/blogfile/uplaod/file/2019042815/";
+						// blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
 						blogInfo.setBlogContent(FileReaderUtils.readFile(blogInfo.getBlogContent()));
 						blist.add(blogInfo);
 					}
@@ -1520,10 +1545,10 @@ public class DoMainController implements Runnable {
 
 				else {
 					// model.addAttribute("errorMsg", "请重新登录");
-					//return new ModelAndView("redirect:/sign_login");
+					// return new ModelAndView("redirect:/sign_login");
 					model.addAttribute("errormsg", "找不到该用户！");
 					return new ModelAndView("errorpage/error");
-					
+
 				}
 
 			} else {
@@ -1540,8 +1565,8 @@ public class DoMainController implements Runnable {
 				}
 				List<BlogInfo> blist = new ArrayList<>();
 				for (BlogInfo blogInfo : lis) {
-					//String v = "/home/blogfile/uplaod/file/2019042815/";
-					//blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
+					// String v = "/home/blogfile/uplaod/file/2019042815/";
+					// blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
 					blogInfo.setBlogContent(FileReaderUtils.readFile(blogInfo.getBlogContent()));
 					blist.add(blogInfo);
 				}
@@ -1597,15 +1622,14 @@ public class DoMainController implements Runnable {
 			return new ModelAndView("redirect:/sign_login");
 		}
 	}
-	
-	@RequestMapping(value = "/blog/page/{nextPage}/{userId}",method = RequestMethod.GET)
-	public ModelAndView pageData(@PathVariable("nextPage") int nextPage,
-			@PathVariable("userId") String userIds,HttpServletRequest request,
-			HttpServletResponse response, Model model) {
+
+	@RequestMapping(value = "/blog/page/{nextPage}/{userId}", method = RequestMethod.GET)
+	public ModelAndView pageData(@PathVariable("nextPage") int nextPage, @PathVariable("userId") String userIds,
+			HttpServletRequest request, HttpServletResponse response, Model model) {
 		try {
 			nextPage = nextPage + 1;
-			nextPage = nextPage*10;
-			System.out.println("当前页码："+nextPage);
+			nextPage = nextPage * 10;
+			System.out.println("当前页码：" + nextPage);
 			List<BlogInfo> lis = new ArrayList<>();
 			BlogUser bu = new BlogUser();
 			BlogUser bu1 = new BlogUser();
@@ -1626,7 +1650,7 @@ public class DoMainController implements Runnable {
 						if (dd1[i].getName().equals("userid") && !dd1[i].getValue().equals("")) {
 							// 解密后的userId
 							String userId = MD5Utils.getFromBASE64(dd1[i].getValue());
-							lis = blogInfoDao.selectallData(userId,nextPage);
+							lis = blogInfoDao.selectallData(userId, nextPage);
 						}
 					}
 				}
@@ -1637,11 +1661,11 @@ public class DoMainController implements Runnable {
 					if (bu1.getNickName() == null || bu1.getNickName().equals("")) {
 						return new ModelAndView("blog/errorpage");
 					}
-					lis = blogInfoDao.selectallData(userIds,nextPage);
+					lis = blogInfoDao.selectallData(userIds, nextPage);
 					List<BlogInfo> blist = new ArrayList<>();
 					for (BlogInfo blogInfo : lis) {
-						//String v = "/home/blogfile/uplaod/file/2019042815/";
-						//blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
+						// String v = "/home/blogfile/uplaod/file/2019042815/";
+						// blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
 						blogInfo.setBlogContent(FileReaderUtils.readFile(blogInfo.getBlogContent()));
 						blist.add(blogInfo);
 					}
@@ -1668,8 +1692,8 @@ public class DoMainController implements Runnable {
 				}
 				List<BlogInfo> blist = new ArrayList<>();
 				for (BlogInfo blogInfo : lis) {
-					//String v = "/home/blogfile/uplaod/file/2019042815/";
-					//blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
+					// String v = "/home/blogfile/uplaod/file/2019042815/";
+					// blogInfo.setBlogContent(FileReaderUtils.readFile(v+blogInfo.getBlogContent().substring(blogInfo.getBlogContent().lastIndexOf("/")+1)));
 					blogInfo.setBlogContent(FileReaderUtils.readFile(blogInfo.getBlogContent()));
 					blist.add(blogInfo);
 				}
@@ -1680,7 +1704,7 @@ public class DoMainController implements Runnable {
 			if (map == null) {
 				int num = 0;
 				for (int i = 0; i < lis.size(); i++) {
-					 					
+
 					num += new ChinesepreNum().chineseCount(lis.get(i).getBlogContent());
 				}
 				model.addAttribute("textnum", num);
@@ -1691,7 +1715,7 @@ public class DoMainController implements Runnable {
 			}
 			List<BlogInfo> blist = new ArrayList<>();
 			for (BlogInfo blogInfo : lis) {
-				 
+
 				if (blogInfo.getBlogContent().length() >= 150) {
 					String content = PeanUtils.delHTMLTag(blogInfo.getBlogContent());
 					if (!content.equals("") && content.length() >= 150) {
@@ -1713,18 +1737,18 @@ public class DoMainController implements Runnable {
 				return new ModelAndView("blog/errorpage");
 			}
 			model.addAttribute("userId", userIds);
-			model.addAttribute("nextPage", nextPage/10);
+			model.addAttribute("nextPage", nextPage / 10);
 			model.addAttribute("blogdatalist", blist);
 			model.addAttribute("bloguser", bu);
 			model.addAttribute("bloguser2", bu1);
-			//model.addAttribute("nextPage", nextPage);
+			// model.addAttribute("nextPage", nextPage);
 			return new ModelAndView("blog/medetail");
 		} catch (UnisException e) {
 			model.addAttribute("errorMsg", "登录错误，请重新登录");
-			//return new ModelAndView("redirect:/sign_login");
+			// return new ModelAndView("redirect:/sign_login");
 		} catch (Exception e) {
 			model.addAttribute("errorMsg", "登录错误，请重新登录");
-			//return new ModelAndView("redirect:/sign_login");
+			// return new ModelAndView("redirect:/sign_login");
 		}
 		return new ModelAndView("blog/errorpage");
 	}
